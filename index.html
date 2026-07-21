@@ -8,6 +8,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Clean Slate">
 <title>Clean Slate · Gym Tracker</title>
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -184,6 +188,7 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 .icon-btn { width:33px; height:33px; border-radius:7px; border:1px solid var(--border2); background:none; color:var(--muted2); cursor:pointer; font-size:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
 .icon-btn:active { background:var(--border); }
 .icon-btn.danger { color:var(--danger); border-color:rgba(255,92,92,.3); }
+.icon-btn.is-armed { color:var(--black); background:var(--accent); border-color:var(--accent); }
 .add-btn { width:100%; padding:13px; background:none; border:1.5px dashed var(--border2); border-radius:9px; color:var(--muted2); font-size:13px; letter-spacing:.05em; cursor:pointer; margin-top:4px; }
 .form-field { margin-bottom:13px; }
 .form-label { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; display:block; }
@@ -242,8 +247,10 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
-// CLEAN SLATE v3 — Gym Tracker
+// CLEAN SLATE v4 — Gym Tracker
 // Backend: Airtable via Cloudflare Worker
+// v4: swap-day scheduling, PWA installability (manifest + service
+//     worker + icons), dedicated app icon
 // ═══════════════════════════════════════════════════════════
 const WORKER_URL = 'https://gym-tracker.stephen-nolan85.workers.dev';
 const CACHE_KEY = 'cleanslate_v3_cache';
@@ -377,6 +384,7 @@ function nextStep(f, minReps) {
 
 // ── navigation ─────────────────────────────────────────────
 function nav(v, c) {
+  if (view === 'manage' && v !== 'manage') swapArmedDay = null;
   view = v; ctx = c || {};
   render();
   window.scrollTo(0, 0);
@@ -444,7 +452,7 @@ function vHome() {
   const stats = homeStats();
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v3</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v4</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">TRAIN<em>TODAY.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad"><div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
@@ -869,7 +877,8 @@ function vManage() {
       .concat(DB.workouts.map(function(w) {
         return '<option value="' + w.id + '"' + (cur===w.id?' selected':'') + '>' + esc(w.fields.Name) + '</option>';
       })).join('');
-    return '<div class="sched-row"><div class="sched-day">' + d + '</div><select onchange="setSched(' + i + ',this.value)">' + opts + '</select></div>';
+    return '<div class="sched-row"><div class="sched-day">' + d + '</div><select onchange="setSched(' + i + ',this.value)">' + opts + '</select>' +
+      '<button class="icon-btn' + (swapArmedDay === i ? ' is-armed' : '') + '" onclick="tapSwap(' + i + ')">⇄</button></div>';
   }).join('');
 
   return '<div class="top-bar"><div class="top-label">Manage</div></div><div class="pad">' +
@@ -891,6 +900,24 @@ async function setSched(day, val) {
   DB.schedule[day] = val;
   cacheSave();
   await writeThrough('/settings/' + DB.scheduleRecId, 'PATCH', { fields: { Value: JSON.stringify(DB.schedule) } }, true);
+}
+
+let swapArmedDay = null;
+function tapSwap(i) {
+  if (swapArmedDay === null) { swapArmedDay = i; render(); return; }
+  if (swapArmedDay === i) { swapArmedDay = null; render(); return; }
+  const armed = swapArmedDay;
+  swapArmedDay = null;
+  swapSched(armed, i);
+}
+async function swapSched(a, b) {
+  const tmp = DB.schedule[a] || 'rest';
+  DB.schedule[a] = DB.schedule[b] || 'rest';
+  DB.schedule[b] = tmp;
+  cacheSave();
+  render();
+  await writeThrough('/settings/' + DB.scheduleRecId, 'PATCH', { fields: { Value: JSON.stringify(DB.schedule) } }, true);
+  toast('Swapped ' + DAY_NAMES[a] + ' ↔ ' + DAY_NAMES[b]);
 }
 
 async function moveWorkout(i, dir) {
@@ -1103,6 +1130,14 @@ async function deleteExercise(id) {
 // ═══ INIT ══════════════════════════════════════════════════
 window.addEventListener('online', function(){ online = true; updateSyncDot(); flushQueue(); });
 window.addEventListener('offline', function(){ online = false; updateSyncDot(); });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('service-worker.js').catch(function (e) {
+      console.warn('Service worker registration failed', e);
+    });
+  });
+}
 
 (async function init() {
   const hadCache = cacheLoad();
