@@ -2,11 +2,12 @@
 // Caches only same-origin shell assets. Airtable / Cloudflare Worker requests
 // always go straight to the network and are never cached.
 // Bump CACHE_NAME on every future deploy so old caches are cleared automatically.
-const CACHE_NAME = 'gym-tracker-shell-v1';
+const CACHE_NAME = 'gym-tracker-shell-v2';
 
 const SHELL_ASSETS = [
   './',
   './index.html',
+  './clean-slate-v5.html',
   './manifest.json',
   './icon-16.png',
   './icon-32.png',
@@ -47,6 +48,6 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./index.html')))
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./clean-slate-v5.html')))
   );
 });
