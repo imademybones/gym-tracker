@@ -132,10 +132,11 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 .nh-wup { color:#ff6b35; font-weight:500; }
 
 /* rest timer pill */
-.timer-pill { position:fixed; bottom:calc(150px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); background:var(--card2); border:1px solid var(--accent); border-radius:99px; padding:10px 18px; display:flex; align-items:center; gap:14px; z-index:150; animation:slideUp .25s ease; box-shadow:0 8px 30px rgba(0,0,0,.6); }
+.timer-pill { gap:8px!important; position:fixed; bottom:calc(150px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); background:var(--card2); border:1px solid var(--accent); border-radius:99px; padding:10px 18px; display:flex; align-items:center; gap:14px; z-index:150; animation:slideUp .25s ease; box-shadow:0 8px 30px rgba(0,0,0,.6); }
 .timer-num { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--accent); min-width:52px; text-align:center; }
 .timer-lbl { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted2); max-width:110px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.timer-skip { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted2); cursor:pointer; border:none; background:none; padding:6px; }
+.timer-skip { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted2); cursor:pointer; border:none; background:none; padding:10px 6px; min-width:36px; }
+.timer-pill .timer-lbl { text-align:center; }
 
 /* finish bar */
 .finish-bar { position:fixed; bottom:calc(64px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); width:100%; max-width:640px; padding:14px 20px 12px; background:linear-gradient(transparent,var(--black) 30%); z-index:90; }
@@ -291,7 +292,7 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
-// CLEAN SLATE v7 — Gym Tracker
+// CLEAN SLATE v8 — Gym Tracker
 // Backend: Airtable via Cloudflare Worker (PPL), localStorage (RP Recomp)
 // v4: swap-day scheduling, PWA installability (manifest + service
 //     worker + icons), dedicated app icon
@@ -302,6 +303,9 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 //     joint pain) → weekly set adjustments via bonusSets; joint-pain flags.
 // v7: early deload prompt after two consecutive sessions where most
 //     exercises fell short of their previous reps at the same weight.
+// v8: rest timer runs off a stored end time (survives lock screen and
+//     reloads, ±time, beep); RP logs back up to Airtable Sessions and
+//     restore onto a fresh device.
 // ═══════════════════════════════════════════════════════════
 const WORKER_URL = 'https://gym-tracker.stephen-nolan85.workers.dev';
 const CACHE_KEY = 'cleanslate_v3_cache';
@@ -395,6 +399,7 @@ async function loadAll(silent) {
     online = true;
     cacheSave();
     flushQueue();
+    rpSync();
   } catch (e) {
     online = false;
     if (!silent) toast('Offline — using cached data');
@@ -506,7 +511,7 @@ function vHome() {
   const stats = homeStats();
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v7</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v8</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">TRAIN<em>TODAY.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad"><div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
@@ -716,27 +721,78 @@ function confirmLeave() {
 }
 
 // ── rest timer ─────────────────────────────────────────────
+// Counts down to a stored end time rather than decrementing, so it stays
+// right when the phone locks or the app is backgrounded, and survives reloads.
+const TIMER_KEY = 'cleanslate_timer';
+let audioCtx = null;
+function timerLeft() { return timer ? Math.max(0, Math.ceil((timer.end - Date.now()) / 1000)) : 0; }
+function timerSave() { try { if (timer) localStorage.setItem(TIMER_KEY, JSON.stringify({ end: timer.end, label: timer.label })); else localStorage.removeItem(TIMER_KEY); } catch (e) {} }
 function startTimer(sec, label) {
   stopTimer();
-  timer = { remaining: sec, label: label };
+  unlockAudio();
+  timer = { end: Date.now() + sec * 1000, label: label };
+  timerSave();
+  runTimer();
+}
+function runTimer() {
   showTimerUI();
-  timer.iv = setInterval(function() {
-    timer.remaining--;
-    const n = document.querySelector('.timer-num');
-    if (n) n.textContent = fmtTimer(timer.remaining);
-    if (timer.remaining <= 0) { vibrate([80,60,80]); toast('Rest over — go!'); stopTimer(); }
-  }, 1000);
+  timer.iv = setInterval(timerTick, 250);
+}
+function timerTick() {
+  if (!timer) return;
+  const left = timerLeft();
+  const n = document.querySelector('.timer-num');
+  if (n) n.textContent = fmtTimer(left);
+  if (left <= 0) {
+    const late = Date.now() - timer.end > 5000;   // finished while the app was asleep
+    stopTimer();
+    if (!late) { vibrate([80,60,80]); beep(); }
+    toast('Rest over – go!');
+  }
+}
+function timerAdjust(sec) {
+  if (!timer) return;
+  timer.end = Math.max(Date.now() + 1000, timer.end + sec * 1000);
+  timerSave(); timerTick();
 }
 function fmtTimer(s) { const m = Math.floor(s/60); return m > 0 ? m + ':' + String(s%60).padStart(2,'0') : String(s); }
-function stopTimer() { if (timer && timer.iv) clearInterval(timer.iv); timer = null; stopTimerUI(); }
+function stopTimer() { if (timer && timer.iv) clearInterval(timer.iv); timer = null; timerSave(); stopTimerUI(); }
+function timerRestore() {
+  const t = loadJSON(TIMER_KEY);
+  if (t && t.end > Date.now()) { timer = { end: t.end, label: t.label }; runTimer(); }
+  else localStorage.removeItem(TIMER_KEY);
+}
+// iOS only allows audio after a user gesture; ticking a set is one
+function unlockAudio() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!audioCtx) audioCtx = new AC();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) {}
+}
+function beep() {
+  if (!audioCtx) return;
+  try {
+    [0, 0.25, 0.5].forEach(function(t) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+      const at = audioCtx.currentTime + t;
+      g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.3, at + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, at + 0.18);
+      o.start(at); o.stop(at + 0.2);
+    });
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', function(){ if (!document.hidden) timerTick(); });
 function stopTimerUI() { const p = document.getElementById('timer-pill'); if (p) p.remove(); }
 function showTimerUI() {
   stopTimerUI();
   if (!timer) return;
   const p = document.createElement('div');
   p.id = 'timer-pill'; p.className = 'timer-pill';
-  p.innerHTML = '<div class="timer-num">' + fmtTimer(timer.remaining) + '</div>' +
-    '<div class="timer-lbl">Rest · ' + esc(timer.label) + '</div>' +
+  p.innerHTML = '<button class="timer-skip" onclick="timerAdjust(-15)">−15</button>' +
+    '<div><div class="timer-num">' + fmtTimer(timerLeft()) + '</div><div class="timer-lbl">Rest · ' + esc(timer.label) + '</div></div>' +
+    '<button class="timer-skip" onclick="timerAdjust(30)">+30</button>' +
     '<button class="timer-skip" onclick="stopTimer()">Skip</button>';
   document.body.appendChild(p);
 }
@@ -870,7 +926,7 @@ async function loadHistory() {
 }
 
 function vHistory() {
-  const sess = (DB.sessions || []).concat(rpHistoryRecords()).sort(function(a,b){ return (b.fields.Date||'').localeCompare(a.fields.Date||''); });
+  const sess = (DB.sessions || []).filter(function(r){ return !rpParseRemote(r); }).concat(rpHistoryRecords()).sort(function(a,b){ return (b.fields.Date||'').localeCompare(a.fields.Date||''); });
   if (!sess.length) return '<div class="top-bar"><div class="top-label">History</div></div>' +
     '<div class="empty-note">No sessions yet.<br>Your first completed workout will land here.</div>';
 
@@ -951,7 +1007,9 @@ function vManage() {
     '<button class="add-btn" onclick="nav(\'editWorkout\',{id:null})">+ Add workout</button>' +
     '<div class="section-head" style="margin-top:26px">Weekly schedule</div>' + schedRows +
     '<div class="section-head" style="margin-top:26px">Data</div>' +
-    '<button class="add-btn" onclick="hardRefresh()">↻ Refresh from Airtable</button></div>';
+    '<button class="add-btn" onclick="hardRefresh()">↻ Refresh from Airtable</button>' +
+    '<button class="add-btn" onclick="rpSyncNow()">⇅ Back up RP sessions now</button>' +
+    '<div class="rp-line" id="rp-sync-status" style="text-align:center">' + rpSyncStatus() + '</div></div>';
 }
 
 async function hardRefresh() {
@@ -1408,7 +1466,7 @@ function vHomeRP() {
   const lastLine = lastLog ? 'Last session: ' + fmtDate(lastLog.date) + ' · Day ' + lastLog.session + ' (' + (daysSince(lastLog.date) === 0 ? 'today' : daysSince(lastLog.date) === 1 ? 'yesterday' : daysSince(lastLog.date) + ' days ago') + ')' : 'No sessions yet – first up is Day A.';
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v7</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v8</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">RP<em>RECOMP.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad">' + rpDeloadOfferHtml(false) + rpPendingBanner() + banner +
@@ -1644,7 +1702,7 @@ function rpFinish() {
   bumpStats();
   DB.sessions = null;
   if (wantFeedback) { rpFbDraft = null; nav('rpFeedback', { logId: log.id }); }
-  else rpShowDone(log, null);
+  else { rpBackupLog(log); rpShowDone(log, null); }
 }
 
 function rpShowDone(log, weekChanges) {
@@ -1845,6 +1903,7 @@ function rpSaveFeedback(skip, logId) {
   if (RP.pendingFeedback === id) RP.pendingFeedback = null;
   const changes = log.session === 'C' ? rpApplyWeek(log, logs) : null;
   rpSave();
+  rpBackupLog(log);
   rpFbDraft = null;
   if (view === 'rpFeedback') rpShowDone(log, changes);
   else { render(); if (changes) toast('Next week\'s sets updated'); }
@@ -1903,6 +1962,81 @@ function setProgramme(id) {
   render();
 }
 
+// ═══ RP AIRTABLE BACKUP ════════════════════════════════════
+// Each closed RP session is POSTed to the existing Sessions table (Kind
+// "lift") with Log = {"rp": <log>, "state": <RP state after it>}. On load,
+// logs missing on either side are synced: local-only ones are uploaded,
+// remote-only ones restored. A fresh device also restores its position.
+const RP_SYNCED_KEY = 'cleanslate_rp_synced';
+let rpSyncing = false;
+function rpSynced() { return loadJSON(RP_SYNCED_KEY) || []; }
+function rpMarkSynced(ids) {
+  const s = rpSynced();
+  ids.forEach(function(id){ if (s.indexOf(id) < 0) s.push(id); });
+  localStorage.setItem(RP_SYNCED_KEY, JSON.stringify(s));
+}
+function rpParseRemote(rec) {
+  if (!rec || !rec.fields || !rec.fields.Log || rec.fields.Log.indexOf('"rp"') < 0) return null;
+  try { const o = JSON.parse(rec.fields.Log); return o && o.rp && o.rp.id ? o : null; } catch (e) { return null; }
+}
+function rpBackupRecord(log) {
+  const state = Object.assign({}, RP);
+  return { fields: { Date: log.date, WorkoutName: 'RP · Week ' + log.week + ' · Day ' + log.session + (log.block > 1 ? ' · Block ' + log.block : ''),
+    Kind: 'lift', Log: JSON.stringify({ rp: log, state: state }) } };
+}
+// writeThrough with critical=true either saves or queues for retry, so the log counts as backed up
+async function rpBackupLog(log) {
+  if (!log || rpSynced().indexOf(log.id) >= 0) return;
+  rpMarkSynced([log.id]);
+  await writeThrough('/sessions', 'POST', { records: [rpBackupRecord(log)] }, true);
+}
+async function rpSync(loud) {
+  if (rpSyncing) return;
+  rpSyncing = true;
+  try {
+    const remote = await atList('sessions');
+    DB.sessions = remote;
+    const remoteLogs = remote.map(rpParseRemote).filter(Boolean).sort(function(a, b){ return a.rp.id - b.rp.id; });
+    const logs = rpLogs();
+    const localIds = logs.map(function(l){ return l.id; });
+    const remoteIds = remoteLogs.map(function(r){ return r.rp.id; });
+    // restore anything only Airtable has
+    const missing = remoteLogs.filter(function(r){ return localIds.indexOf(r.rp.id) < 0; });
+    if (missing.length) {
+      const freshDevice = !logs.length && !rpLive;
+      const merged = logs.concat(missing.map(function(r){ return r.rp; })).sort(function(a, b){ return a.id - b.id; });
+      localStorage.setItem(RP_LOGS_KEY, JSON.stringify(merged));
+      if (freshDevice) {
+        RP = Object.assign(rpDefaultState(), missing[missing.length - 1].state || {});
+        RP.pendingFeedback = null; RP.deloadOffer = null;
+        rpSave();
+      }
+      toast('Restored ' + missing.length + ' RP session' + (missing.length === 1 ? '' : 's') + ' from Airtable');
+    }
+    rpMarkSynced(remoteIds);
+    // upload closed local logs Airtable doesn't have
+    const synced = rpSynced();
+    const toSend = logs.filter(function(l){ return remoteIds.indexOf(l.id) < 0 && synced.indexOf(l.id) < 0 && l.id !== RP.pendingFeedback; });
+    for (const l of toSend) await rpBackupLog(l);
+    if (loud) toast(toSend.length ? 'Backed up ' + toSend.length + ' session' + (toSend.length === 1 ? '' : 's') + ' ✓' : 'RP sessions already backed up ✓');
+    localStorage.setItem('cleanslate_rp_lastsync', new Date().toISOString());
+    if (missing.length && (view === 'home' || view === 'history' || view === 'manage')) render();
+  } catch (e) {
+    if (loud) toast('Offline – backup will run when you\'re back online');
+  } finally {
+    rpSyncing = false;
+    const st = document.getElementById('rp-sync-status');
+    if (st) st.textContent = rpSyncStatus();
+  }
+}
+function rpSyncNow() { rpSync(true); }
+function rpSyncStatus() {
+  const logs = rpLogs(), synced = rpSynced();
+  const n = logs.filter(function(l){ return synced.indexOf(l.id) >= 0; }).length;
+  const last = localStorage.getItem('cleanslate_rp_lastsync');
+  return n + ' of ' + logs.length + ' RP sessions backed up' + (last ? ' · checked ' + new Date(last).toLocaleString('en-AU', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : '');
+}
+
 // ═══ INIT ══════════════════════════════════════════════════
 window.addEventListener('online', function(){ online = true; updateSyncDot(); flushQueue(); });
 window.addEventListener('offline', function(){ online = false; updateSyncDot(); });
@@ -1916,6 +2050,7 @@ if ('serviceWorker' in navigator) {
 }
 
 (async function init() {
+  timerRestore();
   const hadCache = cacheLoad();
   // RP Recomp lives in localStorage, so home can render without waiting on Airtable
   if (rpActive()) { nav('home'); loadAll(true).then(function(){ if (view === 'home' || view === 'manage') render(); }); return; }
