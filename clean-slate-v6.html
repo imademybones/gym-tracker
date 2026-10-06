@@ -254,6 +254,20 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 .ss-pair .ss-tag-row { margin:0; color:var(--accent); }
 .hist-row .hlog-sets.wrap { white-space:normal; text-align:right; flex-shrink:1; }
 
+/* RP feedback (v2) */
+.fb-card { background:var(--card); border:1px solid var(--border); border-radius:11px; padding:15px 16px; }
+.fb-head { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:2px; }
+.fb-muscle { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.04em; }
+.fb-delta { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted2); white-space:nowrap; }
+.fb-delta.up { color:var(--accent); } .fb-delta.down { color:#ff6b35; } .fb-delta.flag { color:var(--danger); }
+.fb-exs { font-size:11px; color:var(--muted); margin-bottom:10px; }
+.fb-q { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:10px 0 6px; display:flex; justify-content:space-between; }
+.fb-q span { letter-spacing:.03em; text-transform:none; color:var(--muted); }
+.fb-seg { display:flex; gap:6px; }
+.fb-opt { flex:1; padding:11px 4px; border-radius:8px; border:1px solid var(--border2); background:none; color:var(--muted2); font-size:13px; cursor:pointer; }
+.fb-opt.sel { background:rgba(232,255,71,.1); border-color:var(--accent); color:var(--accent); font-weight:500; }
+.fb-opt.sel.bad { background:rgba(255,92,92,.1); border-color:var(--danger); color:var(--danger); }
+
 /* loading */
 .loading { text-align:center; padding:80px 20px; color:var(--muted); font-size:13px; letter-spacing:.1em; text-transform:uppercase; animation:pulse 1.4s infinite; }
 </style>
@@ -277,13 +291,15 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
-// CLEAN SLATE v5 — Gym Tracker
+// CLEAN SLATE v6 — Gym Tracker
 // Backend: Airtable via Cloudflare Worker (PPL), localStorage (RP Recomp)
 // v4: swap-day scheduling, PWA installability (manifest + service
 //     worker + icons), dedicated app icon
 // v5: RP Recomp 3-day full-body programme (active by default), with
 //     week-aware sets/RIR, A → B → C rotation, per-set weight/reps/RIR
 //     logging and load suggestions. PPL stays available in Manage.
+// v6: RP post-session feedback per muscle (soreness, pump, workload,
+//     joint pain) → weekly set adjustments via bonusSets; joint-pain flags.
 // ═══════════════════════════════════════════════════════════
 const WORKER_URL = 'https://gym-tracker.stephen-nolan85.workers.dev';
 const CACHE_KEY = 'cleanslate_v3_cache';
@@ -434,6 +450,7 @@ function render() {
   if (view === 'home') app.innerHTML = vHome();
   else if (view === 'session') app.innerHTML = vSession();
   else if (view === 'rpSession') app.innerHTML = vRPSession();
+  else if (view === 'rpFeedback') app.innerHTML = vRPFeedback();
   else if (view === 'cardio') app.innerHTML = vCardio();
   else if (view === 'rest') app.innerHTML = vRest();
   else if (view === 'history') { app.innerHTML = '<div class="loading">Loading history…</div>'; loadHistory(); }
@@ -487,7 +504,7 @@ function vHome() {
   const stats = homeStats();
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v5</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v6</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">TRAIN<em>TODAY.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad"><div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
@@ -1230,7 +1247,7 @@ function loadJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } c
 function rpDefaultState() {
   const bonus = {};
   Object.keys(RP_MUSCLES).forEach(function(m){ bonus[m] = 0; });
-  return { activeProgram: RP_ID, block: 1, week: 1, lastCompletedSession: null, lastSessionDate: null, bonusSets: bonus, repeatDismissedFor: null };
+  return { activeProgram: RP_ID, block: 1, week: 1, lastCompletedSession: null, lastSessionDate: null, bonusSets: bonus, repeatDismissedFor: null, flags: {}, pendingFeedback: null };
 }
 let RP = Object.assign(rpDefaultState(), loadJSON(RP_STATE_KEY) || {});
 let rpLive = loadJSON(RP_LIVE_KEY);   // in-progress RP session, survives reloads
@@ -1389,14 +1406,15 @@ function vHomeRP() {
   const lastLine = lastLog ? 'Last session: ' + fmtDate(lastLog.date) + ' · Day ' + lastLog.session + ' (' + (daysSince(lastLog.date) === 0 ? 'today' : daysSince(lastLog.date) === 1 ? 'yesterday' : daysSince(lastLog.date) + ' days ago') + ')' : 'No sessions yet – first up is Day A.';
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v5</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v6</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">RP<em>RECOMP.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
-    '<div class="pad">' + banner +
+    '<div class="pad">' + rpPendingBanner() + banner +
     '<div class="section-head">Next session</div>' + card +
     '<div style="font-size:12px;color:var(--muted2);margin:-14px 0 26px">' + lastLine + '</div>' +
     '<div class="section-head">Block ' + pos.block + '</div><div class="week-strip" style="grid-template-columns:repeat(5,1fr)">' + weekChips + '</div>' +
     '<div class="section-head">Week ' + pos.week + '</div>' + dayRows +
+    rpBonusHtml(pos.week) +
     '<div class="section-head" style="margin-top:22px">Progress</div>' +
     '<div class="home-stats"><div class="hstat"><div class="hstat-val">' + logs.length + '</div><div class="hstat-label">Sessions</div></div>' +
     '<div class="hstat"><div class="hstat-val">' + pos.block + '</div><div class="hstat-label">Block</div></div>' +
@@ -1458,8 +1476,9 @@ function rpExCard(ex, logs) {
   const sug = rpSuggest(ex, rpLive.block, rpLive.week, logs);
   const last = rpFindPerf(ex.id, logs);
   const allDone = !st.skipped && st.sets.length > 0 && st.sets.every(function(s){ return s.done; });
-  const lastHtml = last ? '<div class="rp-line">Last time <span style="color:var(--muted)">(Wk ' + last.log.week + ', ' + fmtDate(last.log.date) + ')</span>: <b>' +
-    last.sets.map(function(s){ return s.weight + ' × ' + s.reps; }).join(', ') + '</b></div>' : '<div class="rp-line">Last time: –</div>';
+  const flagHtml = RP.flags && RP.flags[ex.id] ? '<div class="rp-line" style="color:var(--danger)">⚠ Joint pain flagged on ' + fmtDate(RP.flags[ex.id].date) + ' – consider a lighter load or a swap.</div>' : '';
+  const lastHtml = flagHtml + (last ? '<div class="rp-line">Last time <span style="color:var(--muted)">(Wk ' + last.log.week + ', ' + fmtDate(last.log.date) + ')</span>: <b>' +
+    last.sets.map(function(s){ return s.weight + ' × ' + s.reps; }).join(', ') + '</b></div>' : '<div class="rp-line">Last time: –</div>');
   const sugHtml = '<div class="rp-line">' + (sug.weight != null ? 'Suggested: <span class="sug">' + sug.weight + ' kg</span> · ' : '') + esc(sug.hint) + '</div>';
   const rows = st.sets.map(function(s, i) {
     const ph = last && last.sets[i] ? last.sets[i].reps : ex.reps[0] + '–' + ex.reps[1];
@@ -1615,11 +1634,21 @@ function rpFinish() {
       Object.keys(RP.bonusSets).forEach(function(m){ RP.bonusSets[m] = 0; });
     }
   }
+  const wantFeedback = !rpWeek(log.week).deload;
+  if (wantFeedback) RP.pendingFeedback = log.id;
   rpSave();
   rpLive = null; rpLiveSave();
   bumpStats();
   DB.sessions = null;
+  if (wantFeedback) { rpFbDraft = null; nav('rpFeedback', { logId: log.id }); }
+  else rpShowDone(log, null);
+}
 
+function rpShowDone(log, weekChanges) {
+  const summary = rpSessionDef(log.session).exercises.map(function(ex) {
+    const sets = log.sets.filter(function(s){ return s.exercise === ex.id; });
+    return { name: ex.name, done: sets.filter(function(s){ return s.done; }).length, total: sets.length, skipped: (log.skipped || []).indexOf(ex.id) >= 0 };
+  });
   const list = summary.map(function(s) {
     const chg = s.skipped ? '<span class="prog-chg pc-hold">skipped</span>' :
       '<span class="prog-chg ' + (s.done === s.total ? 'pc-rep' : 'pc-hold') + '">' + s.done + '/' + s.total + ' sets</span>';
@@ -1627,7 +1656,8 @@ function rpFinish() {
   }).join('');
   const wkNote = log.session === 'C' ? (RP.week === 1 ? 'Block ' + log.block + ' complete – new block starts at week 1.' : 'Week ' + log.week + ' complete – week ' + RP.week + ' is RIR ' + rpWeek(RP.week).rir + '.') : '';
   document.getElementById('modal-inner').innerHTML = '<div class="modal-title">Day ' + log.session + ' Done 💪</div>' +
-    '<div class="modal-sub">' + (wkNote ? wkNote + '<br>' : '') + 'Next: ' + rpPosLabel(RP.block, RP.week, rpNextSession()) + '</div>' + list +
+    '<div class="modal-sub">' + (wkNote ? wkNote + '<br>' : '') + 'Next: ' + rpPosLabel(RP.block, RP.week, rpNextSession()) + '</div>' +
+    (weekChanges ? rpWeekChangesHtml(weekChanges) : '') + list +
     '<button class="modal-btn" onclick="closeModal()">Back to Home</button>';
   document.getElementById('modal').classList.add('open');
 }
@@ -1648,7 +1678,172 @@ function rpHistBody(l) {
     const txt = (l.skipped || []).indexOf(ex.id) >= 0 ? 'skipped' :
       done.map(function(s){ return s.weight + '×' + s.reps + (s.rir != null ? ' @' + s.rir : ''); }).join(' · ') + (missed ? (done.length ? ' · ' : '') + missed + ' skipped' : '');
     return '<div class="hlog-row"><div class="hlog-name">' + esc(ex.name) + '</div><div class="hlog-sets wrap">' + txt + '</div></div>';
+  }).join('') + (l.feedback ? Object.keys(l.feedback).map(function(m) {
+    const f = l.feedback[m];
+    return '<div class="hlog-row"><div class="hlog-name" style="color:var(--muted2)">' + RP_MUSCLES[m] + ' feedback</div><div class="hlog-sets wrap">' +
+      RP_SORENESS[f.soreness] + ' · pump ' + f.pump + ' · workload ' + f.workload + (f.jointPain ? ' · joint pain' : '') + ' → ' + rpDeltaLabel(f.delta) + '</div></div>';
+  }).join('') : '');
+}
+
+// ═══ RP FEEDBACK (v2) ══════════════════════════════════════
+// After each non-deload session: per muscle trained, soreness coming in,
+// pump, workload and joint pain → a set delta. At the end of the week the
+// lowest delta per muscle adjusts that muscle's bonusSets (−1…+2).
+const RP_SORENESS = { healedEarly: 'Healed early', justInTime: 'Just in time', stillSore: 'Still sore' };
+let rpFbDraft = null;
+
+function rpLogById(id) { return rpLogs().find(function(l){ return l.id === id; }); }
+// muscles with at least one done set this session, in session order
+function rpMusclesIn(log) {
+  const out = [];
+  rpSessionDef(log.session).exercises.forEach(function(ex) {
+    const done = log.sets.some(function(s){ return s.exercise === ex.id && s.done; });
+    if (done && out.indexOf(ex.muscle) < 0) out.push(ex.muscle);
+  });
+  return out;
+}
+// did any of this muscle's exercises fall short of last time's reps at the same weight?
+function rpRepsDropped(log, muscle) {
+  const prior = rpLogs().filter(function(l){ return l.id < log.id; });
+  return rpSessionDef(log.session).exercises.some(function(ex) {
+    if (ex.muscle !== muscle) return false;
+    const now = log.sets.filter(function(s){ return s.exercise === ex.id && s.done && s.reps != null; });
+    const prev = rpFindPerf(ex.id, prior);
+    if (!now.length || !prev) return false;
+    let a = 0, b = 0, pairs = 0;
+    for (let i = 0; i < Math.min(now.length, prev.sets.length); i++) {
+      if (now[i].weight !== prev.sets[i].weight) continue;
+      a += now[i].reps; b += prev.sets[i].reps; pairs++;
+    }
+    return pairs > 0 && a < b;
+  });
+}
+function rpDelta(f, dropped) {
+  if (f.jointPain) return 0;
+  if (f.soreness === 'stillSore') return dropped ? -1 : 0;
+  if (f.soreness === 'justInTime') return 0;
+  return f.workload === 3 ? 0 : 1;   // healed early
+}
+function rpDeltaLabel(d) { return d > 0 ? '+' + d + ' set' : d < 0 ? '−' + Math.abs(d) + ' set' : 'hold'; }
+
+function vRPFeedback() {
+  const log = rpLogById(ctx.logId);
+  if (!log) return '<div class="empty-note">Session not found.</div>';
+  const muscles = rpMusclesIn(log);
+  if (!rpFbDraft || rpFbDraft.logId !== log.id) {
+    rpFbDraft = { logId: log.id, m: {} };
+    muscles.forEach(function(m){ rpFbDraft.m[m] = { soreness: 'justInTime', pump: 2, workload: 2, jointPain: false }; });
+  }
+  const cards = muscles.map(function(m) {
+    const exs = rpSessionDef(log.session).exercises.filter(function(e){ return e.muscle === m; }).map(function(e){ return e.name; });
+    return '<div class="fb-card" id="fb-' + m + '">' + rpFbCardInner(log, m, exs) + '</div>';
   }).join('');
+  return '<div class="top-bar"><div class="top-label" style="color:var(--accent)">Day ' + log.session + ' Feedback</div>' +
+    '<div class="top-action" style="color:var(--muted2)" onclick="rpSaveFeedback(true)">Skip</div></div>' +
+    '<div class="pad" style="margin-bottom:14px"><div style="font-size:13px;color:var(--muted2);line-height:1.6">' + rpPosLabel(log.block, log.week, log.session) +
+    '<br>Quick taps per muscle – the most cautious answer across the week sets next week\'s volume.</div></div>' +
+    '<div class="ex-wrap">' + cards + '</div><div style="height:130px"></div>' +
+    '<div class="finish-bar"><button class="finish-btn" onclick="rpSaveFeedback(false)">Save Feedback</button></div>';
+}
+
+function rpFbCardInner(log, m, exs) {
+  const f = rpFbDraft.m[m];
+  const d = rpDelta(f, rpRepsDropped(log, m));
+  const cls = f.jointPain ? 'flag' : d > 0 ? 'up' : d < 0 ? 'down' : '';
+  const seg = function(field, opts) {
+    return '<div class="fb-seg">' + opts.map(function(o) {
+      const sel = f[field] === o[0];
+      return '<button class="fb-opt' + (sel ? ' sel' + (o[2] ? ' bad' : '') : '') + '" onclick=\'rpFbSet("' + m + '","' + field + '",' + JSON.stringify(o[0]) + ')\'>' + o[1] + '</button>';
+    }).join('') + '</div>';
+  };
+  return '<div class="fb-head"><div class="fb-muscle">' + RP_MUSCLES[m] + '</div><div class="fb-delta ' + cls + '">' + (f.jointPain ? 'Hold · flagged' : rpDeltaLabel(d)) + '</div></div>' +
+    '<div class="fb-exs">' + esc(exs.join(' · ')) + '</div>' +
+    '<div class="fb-q">Soreness coming in</div>' + seg('soreness', [['healedEarly', 'Healed early'], ['justInTime', 'Just in time'], ['stillSore', 'Still sore']]) +
+    '<div class="fb-q">Pump <span>1 low – 3 great</span></div>' + seg('pump', [[1, '1'], [2, '2'], [3, '3']]) +
+    '<div class="fb-q">Workload <span>1 easy – 3 too much</span></div>' + seg('workload', [[1, '1'], [2, '2'], [3, '3']]) +
+    '<div class="fb-q">Joint pain</div>' + seg('jointPain', [[false, 'No'], [true, 'Yes', true]]);
+}
+
+function rpFbSet(m, field, val) {
+  rpFbDraft.m[m][field] = val;
+  const log = rpLogById(rpFbDraft.logId);
+  const el = document.getElementById('fb-' + m);
+  const exs = rpSessionDef(log.session).exercises.filter(function(e){ return e.muscle === m; }).map(function(e){ return e.name; });
+  if (el) el.innerHTML = rpFbCardInner(log, m, exs);
+}
+
+// save (or skip) feedback for a log; completing Day C applies the week's deltas
+function rpSaveFeedback(skip, logId) {
+  const id = logId || (rpFbDraft && rpFbDraft.logId) || ctx.logId;
+  const logs = rpLogs();
+  const log = logs.find(function(l){ return l.id === id; });
+  if (!log) return;
+  if (!skip && rpFbDraft && rpFbDraft.logId === id) {
+    const fb = {};
+    Object.keys(rpFbDraft.m).forEach(function(m) {
+      const f = rpFbDraft.m[m], dropped = rpRepsDropped(log, m);
+      fb[m] = { soreness: f.soreness, pump: f.pump, workload: f.workload, jointPain: f.jointPain, repsDropped: dropped, delta: rpDelta(f, dropped) };
+      // joint pain flags this muscle's exercises from the session; a pain-free report clears them
+      rpSessionDef(log.session).exercises.forEach(function(ex) {
+        if (ex.muscle !== m) return;
+        if (f.jointPain) RP.flags[ex.id] = { date: log.date };
+        else delete RP.flags[ex.id];
+      });
+    });
+    log.feedback = fb;
+    localStorage.setItem(RP_LOGS_KEY, JSON.stringify(logs));
+  }
+  if (RP.pendingFeedback === id) RP.pendingFeedback = null;
+  const changes = log.session === 'C' ? rpApplyWeek(log, logs) : null;
+  rpSave();
+  rpFbDraft = null;
+  if (view === 'rpFeedback') rpShowDone(log, changes);
+  else { render(); if (changes) toast('Next week\'s sets updated'); }
+}
+
+// lowest delta per muscle across the week's sessions → bonusSets, clamped −1…+2
+function rpApplyWeek(cLog, logs) {
+  if (rpWeek(cLog.week).deload) return null;
+  // a block rollover already reset bonus sets; nothing to carry
+  if (RP.block !== cLog.block) return null;
+  const week = logs.filter(function(l){ return l.block === cLog.block && l.week === cLog.week && l.feedback; });
+  const changes = [];
+  Object.keys(RP_MUSCLES).forEach(function(m) {
+    const ds = week.filter(function(l){ return l.feedback[m]; }).map(function(l){ return l.feedback[m].delta; });
+    if (!ds.length) return;
+    const d = Math.min.apply(null, ds);
+    const before = RP.bonusSets[m] || 0;
+    const after = Math.max(-1, Math.min(2, before + d));
+    RP.bonusSets[m] = after;
+    if (after !== before) changes.push({ muscle: m, from: before, to: after });
+  });
+  return changes;
+}
+
+function rpWeekChangesHtml(changes) {
+  if (!changes.length) return '<div class="rp-line" style="margin:0 0 12px">Volume holds steady next week.</div>';
+  return '<div class="rp-line" style="margin:0 0 12px">Next week: ' + changes.map(function(c) {
+    return '<b>' + RP_MUSCLES[c.muscle] + ' ' + (c.to > c.from ? '+' : '−') + Math.abs(c.to - c.from) + ' set</b>';
+  }).join(', ') + '</div>';
+}
+
+function rpPendingBanner() {
+  if (!RP.pendingFeedback) return '';
+  const log = rpLogById(RP.pendingFeedback);
+  if (!log) return '';
+  return '<div class="rp-banner"><div class="rp-banner-t">Feedback for Day ' + log.session + ' (' + fmtDate(log.date) + ') isn\'t done yet' + (log.session === 'C' ? ' – it sets next week\'s volume.' : '.') + '</div>' +
+    '<div class="rp-banner-btns"><button class="rp-btn primary" onclick="nav(\'rpFeedback\',{logId:' + log.id + '})">Rate now</button>' +
+    '<button class="rp-btn" onclick="rpSaveFeedback(true,' + log.id + ')">Skip</button></div></div>';
+}
+
+function rpBonusHtml(week) {
+  if (rpWeek(week).deload) return '';
+  const on = Object.keys(RP_MUSCLES).filter(function(m){ return RP.bonusSets[m]; });
+  if (!on.length) return '';
+  return '<div class="rp-line" style="margin:2px 0 0">Volume from feedback: ' + on.map(function(m) {
+    const b = RP.bonusSets[m];
+    return '<b>' + RP_MUSCLES[m] + ' ' + (b > 0 ? '+' : '−') + Math.abs(b) + '</b>';
+  }).join(', ') + ' sets this week</div>';
 }
 
 // ── programme switch ───────────────────────────────────────
