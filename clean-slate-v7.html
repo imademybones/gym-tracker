@@ -291,7 +291,7 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
-// CLEAN SLATE v6 — Gym Tracker
+// CLEAN SLATE v7 — Gym Tracker
 // Backend: Airtable via Cloudflare Worker (PPL), localStorage (RP Recomp)
 // v4: swap-day scheduling, PWA installability (manifest + service
 //     worker + icons), dedicated app icon
@@ -300,6 +300,8 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 //     logging and load suggestions. PPL stays available in Manage.
 // v6: RP post-session feedback per muscle (soreness, pump, workload,
 //     joint pain) → weekly set adjustments via bonusSets; joint-pain flags.
+// v7: early deload prompt after two consecutive sessions where most
+//     exercises fell short of their previous reps at the same weight.
 // ═══════════════════════════════════════════════════════════
 const WORKER_URL = 'https://gym-tracker.stephen-nolan85.workers.dev';
 const CACHE_KEY = 'cleanslate_v3_cache';
@@ -504,7 +506,7 @@ function vHome() {
   const stats = homeStats();
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v6</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v7</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">TRAIN<em>TODAY.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad"><div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
@@ -1247,7 +1249,7 @@ function loadJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } c
 function rpDefaultState() {
   const bonus = {};
   Object.keys(RP_MUSCLES).forEach(function(m){ bonus[m] = 0; });
-  return { activeProgram: RP_ID, block: 1, week: 1, lastCompletedSession: null, lastSessionDate: null, bonusSets: bonus, repeatDismissedFor: null, flags: {}, pendingFeedback: null };
+  return { activeProgram: RP_ID, block: 1, week: 1, lastCompletedSession: null, lastSessionDate: null, bonusSets: bonus, repeatDismissedFor: null, flags: {}, pendingFeedback: null, deloadOffer: null };
 }
 let RP = Object.assign(rpDefaultState(), loadJSON(RP_STATE_KEY) || {});
 let rpLive = loadJSON(RP_LIVE_KEY);   // in-progress RP session, survives reloads
@@ -1406,10 +1408,10 @@ function vHomeRP() {
   const lastLine = lastLog ? 'Last session: ' + fmtDate(lastLog.date) + ' · Day ' + lastLog.session + ' (' + (daysSince(lastLog.date) === 0 ? 'today' : daysSince(lastLog.date) === 1 ? 'yesterday' : daysSince(lastLog.date) + ' days ago') + ')' : 'No sessions yet – first up is Day A.';
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v6</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v7</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">RP<em>RECOMP.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
-    '<div class="pad">' + rpPendingBanner() + banner +
+    '<div class="pad">' + rpDeloadOfferHtml(false) + rpPendingBanner() + banner +
     '<div class="section-head">Next session</div>' + card +
     '<div style="font-size:12px;color:var(--muted2);margin:-14px 0 26px">' + lastLine + '</div>' +
     '<div class="section-head">Block ' + pos.block + '</div><div class="week-strip" style="grid-template-columns:repeat(5,1fr)">' + weekChips + '</div>' +
@@ -1634,6 +1636,7 @@ function rpFinish() {
       Object.keys(RP.bonusSets).forEach(function(m){ RP.bonusSets[m] = 0; });
     }
   }
+  RP.deloadOffer = rpCheckEarlyDeload(log, logs) ? log.id : null;
   const wantFeedback = !rpWeek(log.week).deload;
   if (wantFeedback) RP.pendingFeedback = log.id;
   rpSave();
@@ -1657,6 +1660,7 @@ function rpShowDone(log, weekChanges) {
   const wkNote = log.session === 'C' ? (RP.week === 1 ? 'Block ' + log.block + ' complete – new block starts at week 1.' : 'Week ' + log.week + ' complete – week ' + RP.week + ' is RIR ' + rpWeek(RP.week).rir + '.') : '';
   document.getElementById('modal-inner').innerHTML = '<div class="modal-title">Day ' + log.session + ' Done 💪</div>' +
     '<div class="modal-sub">' + (wkNote ? wkNote + '<br>' : '') + 'Next: ' + rpPosLabel(RP.block, RP.week, rpNextSession()) + '</div>' +
+    '<div id="deload-offer">' + rpDeloadOfferHtml(true) + '</div>' +
     (weekChanges ? rpWeekChangesHtml(weekChanges) : '') + list +
     '<button class="modal-btn" onclick="closeModal()">Back to Home</button>';
   document.getElementById('modal').classList.add('open');
@@ -1703,20 +1707,65 @@ function rpMusclesIn(log) {
   return out;
 }
 // did any of this muscle's exercises fall short of last time's reps at the same weight?
+// did this exercise get fewer reps than last time on sets at the same weight?
+function rpExFellShort(log, exId, prior) {
+  const now = log.sets.filter(function(s){ return s.exercise === exId && s.done && s.reps != null; });
+  const prev = rpFindPerf(exId, prior);
+  if (!now.length || !prev) return false;
+  let a = 0, b = 0, pairs = 0;
+  for (let i = 0; i < Math.min(now.length, prev.sets.length); i++) {
+    if (now[i].weight !== prev.sets[i].weight) continue;
+    a += now[i].reps; b += prev.sets[i].reps; pairs++;
+  }
+  return pairs > 0 && a < b;
+}
+function rpPriorLogs(log, logs) { return (logs || rpLogs()).filter(function(l){ return l.id < log.id; }); }
 function rpRepsDropped(log, muscle) {
-  const prior = rpLogs().filter(function(l){ return l.id < log.id; });
+  const prior = rpPriorLogs(log);
   return rpSessionDef(log.session).exercises.some(function(ex) {
-    if (ex.muscle !== muscle) return false;
-    const now = log.sets.filter(function(s){ return s.exercise === ex.id && s.done && s.reps != null; });
-    const prev = rpFindPerf(ex.id, prior);
-    if (!now.length || !prev) return false;
-    let a = 0, b = 0, pairs = 0;
-    for (let i = 0; i < Math.min(now.length, prev.sets.length); i++) {
-      if (now[i].weight !== prev.sets[i].weight) continue;
-      a += now[i].reps; b += prev.sets[i].reps; pairs++;
-    }
-    return pairs > 0 && a < b;
+    return ex.muscle === muscle && rpExFellShort(log, ex.id, prior);
   });
+}
+
+// ── rp: early deload ───────────────────────────────────────
+// A session "fell short" when more than half of the exercises performed got
+// fewer reps than last time at the same weight. Two in a row → offer deload.
+function rpSessionFellShort(log, logs) {
+  const prior = rpPriorLogs(log, logs);
+  const done = rpSessionDef(log.session).exercises.filter(function(ex) {
+    return log.sets.some(function(s){ return s.exercise === ex.id && s.done; });
+  });
+  if (!done.length) return false;
+  const short = done.filter(function(ex){ return rpExFellShort(log, ex.id, prior); }).length;
+  return short > done.length / 2;
+}
+function rpCheckEarlyDeload(log, logs) {
+  if (rpWeek(log.week).deload || rpWeek(RP.week).deload) return false;
+  const i = logs.findIndex(function(l){ return l.id === log.id; });
+  const prev = i > 0 ? logs[i - 1] : null;
+  if (!prev || rpWeek(prev.week).deload) return false;
+  return rpSessionFellShort(log, logs) && rpSessionFellShort(prev, logs);
+}
+function rpDeloadOfferHtml(inModal) {
+  if (!RP.deloadOffer || rpWeek(RP.week).deload) return '';
+  return '<div class="rp-banner"' + (inModal ? ' style="margin:0 0 14px"' : '') + '><div class="rp-banner-t"><b style="font-weight:500">Take your deload now?</b><br>' +
+    'Most exercises fell short of last time\'s reps in your last two sessions – a sign fatigue is outrunning recovery.</div>' +
+    '<div class="rp-banner-btns"><button class="rp-btn primary" onclick="rpAcceptDeload()">Deload now</button><button class="rp-btn" onclick="rpDismissDeload()">Not yet</button></div></div>';
+}
+function rpAcceptDeload() {
+  RP.week = RP_PROGRAM.blockLength;
+  RP.lastCompletedSession = null;
+  RP.deloadOffer = null;
+  rpSave();
+  document.getElementById('modal').classList.remove('open');
+  toast('Deload week starts with Day A');
+  nav('home');
+}
+function rpDismissDeload() {
+  RP.deloadOffer = null;
+  rpSave();
+  if (document.getElementById('modal').classList.contains('open')) document.getElementById('deload-offer').innerHTML = '';
+  else render();
 }
 function rpDelta(f, dropped) {
   if (f.jointPain) return 0;
