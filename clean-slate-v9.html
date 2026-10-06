@@ -292,7 +292,7 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
-// CLEAN SLATE v8 — Gym Tracker
+// CLEAN SLATE v9 — Gym Tracker
 // Backend: Airtable via Cloudflare Worker (PPL), localStorage (RP Recomp)
 // v4: swap-day scheduling, PWA installability (manifest + service
 //     worker + icons), dedicated app icon
@@ -306,6 +306,8 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 // v8: rest timer runs off a stored end time (survives lock screen and
 //     reloads, ±time, beep); RP logs back up to Airtable Sessions and
 //     restore onto a fresh device.
+// v9: optional sync key sent to the Worker (X-Sync-Key); edit or delete
+//     past RP sessions (synced to Airtable); set RP position by hand.
 // ═══════════════════════════════════════════════════════════
 const WORKER_URL = 'https://gym-tracker.stephen-nolan85.workers.dev';
 const CACHE_KEY = 'cleanslate_v3_cache';
@@ -325,11 +327,20 @@ let timer = null;          // { remaining, iv, label }
 let online = true;
 
 // ── api layer ──────────────────────────────────────────────
+// The sync key is entered once per device (Manage → Data) and never lives in
+// the page source. It's only sent once set, so the Worker can be updated first.
+const SYNC_KEY_STORE = 'cleanslate_sync_key';
+let authFailed = false;
+function syncKey() { try { return localStorage.getItem(SYNC_KEY_STORE) || ''; } catch (e) { return ''; } }
 async function api(path, method, body) {
   const opts = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
+  const key = syncKey();
+  if (key) opts.headers['X-Sync-Key'] = key;
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(WORKER_URL + path, opts);
+  if (res.status === 401 || res.status === 403) authFailed = true;
   if (!res.ok) { const t = await res.text(); throw new Error('API ' + res.status + ': ' + t.slice(0, 200)); }
+  authFailed = false;
   return res.json();
 }
 
@@ -458,6 +469,7 @@ function render() {
   else if (view === 'session') app.innerHTML = vSession();
   else if (view === 'rpSession') app.innerHTML = vRPSession();
   else if (view === 'rpFeedback') app.innerHTML = vRPFeedback();
+  else if (view === 'rpEdit') app.innerHTML = vRPEdit();
   else if (view === 'cardio') app.innerHTML = vCardio();
   else if (view === 'rest') app.innerHTML = vRest();
   else if (view === 'history') { app.innerHTML = '<div class="loading">Loading history…</div>'; loadHistory(); }
@@ -511,7 +523,7 @@ function vHome() {
   const stats = homeStats();
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v8</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v9</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">TRAIN<em>TODAY.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad"><div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
@@ -992,7 +1004,7 @@ function vManage() {
       '<button class="icon-btn' + (swapArmedDay === i ? ' is-armed' : '') + '" onclick="tapSwap(' + i + ')">⇄</button></div>';
   }).join('');
 
-  const progs = [{ id: RP_ID, name: RP_PROGRAM.name, sub: '3 sessions · A → B → C · stored on this device' },
+  const progs = [{ id: RP_ID, name: RP_PROGRAM.name, sub: '3 sessions · A → B → C · backed up to Airtable' },
     { id: PPL_ID, name: 'PPL split', sub: 'Weekly schedule · synced with Airtable' }].map(function(p) {
     const on = RP.activeProgram === p.id;
     return '<div class="mrow" style="cursor:pointer' + (on ? ';border-color:var(--accent)' : '') + '" onclick="setProgramme(\'' + p.id + '\')">' +
@@ -1002,14 +1014,19 @@ function vManage() {
   }).join('');
 
   return '<div class="top-bar"><div class="top-label">Manage</div></div><div class="pad">' +
-    '<div class="section-head">Programme</div>' + progs +
+    '<div class="section-head">Programme</div>' + progs + rpPositionHtml() +
     '<div class="section-head" style="margin-top:26px">PPL workouts</div>' + rows +
     '<button class="add-btn" onclick="nav(\'editWorkout\',{id:null})">+ Add workout</button>' +
     '<div class="section-head" style="margin-top:26px">Weekly schedule</div>' + schedRows +
     '<div class="section-head" style="margin-top:26px">Data</div>' +
     '<button class="add-btn" onclick="hardRefresh()">↻ Refresh from Airtable</button>' +
     '<button class="add-btn" onclick="rpSyncNow()">⇅ Back up RP sessions now</button>' +
-    '<div class="rp-line" id="rp-sync-status" style="text-align:center">' + rpSyncStatus() + '</div></div>';
+    '<div class="rp-line" id="rp-sync-status" style="text-align:center">' + rpSyncStatus() + '</div>' +
+    '<div class="section-head" style="margin-top:26px">Sync key</div>' +
+    (authFailed ? '<div class="rp-line" style="color:var(--danger);margin:0 0 10px">Airtable refused the request – check the key matches the Worker\'s SYNC_KEY.</div>' : '') +
+    '<div style="display:flex;gap:8px"><input id="sync-key" type="password" autocomplete="off" placeholder="' + (syncKey() ? 'Key saved on this device' : 'Paste your sync key') + '">' +
+    '<button class="icon-btn" style="width:auto;padding:0 14px;height:auto" onclick="saveSyncKey()">Save</button></div>' +
+    '<div class="rp-line" style="margin-bottom:24px">Sent to your Worker with every request. Leave blank until the Worker checks it.</div></div>';
 }
 
 async function hardRefresh() {
@@ -1466,7 +1483,7 @@ function vHomeRP() {
   const lastLine = lastLog ? 'Last session: ' + fmtDate(lastLog.date) + ' · Day ' + lastLog.session + ' (' + (daysSince(lastLog.date) === 0 ? 'today' : daysSince(lastLog.date) === 1 ? 'yesterday' : daysSince(lastLog.date) + ' days ago') + ')' : 'No sessions yet – first up is Day A.';
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v8</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v9</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">RP<em>RECOMP.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad">' + rpDeloadOfferHtml(false) + rpPendingBanner() + banner +
@@ -1744,7 +1761,7 @@ function rpHistBody(l) {
     const f = l.feedback[m];
     return '<div class="hlog-row"><div class="hlog-name" style="color:var(--muted2)">' + RP_MUSCLES[m] + ' feedback</div><div class="hlog-sets wrap">' +
       RP_SORENESS[f.soreness] + ' · pump ' + f.pump + ' · workload ' + f.workload + (f.jointPain ? ' · joint pain' : '') + ' → ' + rpDeltaLabel(f.delta) + '</div></div>';
-  }).join('') : '');
+  }).join('') : '') + '<button class="rp-link accent" onclick="nav(\'rpEdit\',{logId:' + l.id + '})">✎ Edit or delete session</button>';
 }
 
 // ═══ RP FEEDBACK (v2) ══════════════════════════════════════
@@ -1996,8 +2013,24 @@ async function rpSync(loud) {
   try {
     const remote = await atList('sessions');
     DB.sessions = remote;
-    const remoteLogs = remote.map(rpParseRemote).filter(Boolean).sort(function(a, b){ return a.rp.id - b.rp.id; });
-    const logs = rpLogs();
+    const deleted = rpDeleted();
+    const all = remote.map(function(rec){ const o = rpParseRemote(rec); if (o) o.recId = rec.id; return o; }).filter(Boolean);
+    // sessions deleted on this phone: remove the Airtable copy too
+    for (const r of all.filter(function(r){ return deleted.indexOf(r.rp.id) >= 0; })) {
+      await writeThrough('/sessions?records[]=' + r.recId, 'DELETE', null, true);
+    }
+    const remoteLogs = all.filter(function(r){ return deleted.indexOf(r.rp.id) < 0; }).sort(function(a, b){ return a.rp.id - b.rp.id; });
+    let logs = rpLogs();
+    // edits: the higher revision wins in either direction
+    let pulled = 0;
+    for (const r of remoteLogs) {
+      const i = logs.findIndex(function(l){ return l.id === r.rp.id; });
+      if (i < 0) continue;
+      const lr = logs[i].rev || 0, rr = r.rp.rev || 0;
+      if (lr > rr) await writeThrough('/sessions', 'PATCH', { records: [{ id: r.recId, fields: { Log: JSON.stringify({ rp: logs[i], state: r.state }) } }] }, true);
+      else if (rr > lr) { logs[i] = r.rp; pulled++; }
+    }
+    if (pulled) localStorage.setItem(RP_LOGS_KEY, JSON.stringify(logs));
     const localIds = logs.map(function(l){ return l.id; });
     const remoteIds = remoteLogs.map(function(r){ return r.rp.id; });
     // restore anything only Airtable has
@@ -2020,7 +2053,7 @@ async function rpSync(loud) {
     for (const l of toSend) await rpBackupLog(l);
     if (loud) toast(toSend.length ? 'Backed up ' + toSend.length + ' session' + (toSend.length === 1 ? '' : 's') + ' ✓' : 'RP sessions already backed up ✓');
     localStorage.setItem('cleanslate_rp_lastsync', new Date().toISOString());
-    if (missing.length && (view === 'home' || view === 'history' || view === 'manage')) render();
+    if ((missing.length || pulled) && (view === 'home' || view === 'history' || view === 'manage')) render();
   } catch (e) {
     if (loud) toast('Offline – backup will run when you\'re back online');
   } finally {
@@ -2030,6 +2063,112 @@ async function rpSync(loud) {
   }
 }
 function rpSyncNow() { rpSync(true); }
+const RP_DELETED_KEY = 'cleanslate_rp_deleted';
+function rpDeleted() { return loadJSON(RP_DELETED_KEY) || []; }
+
+function saveSyncKey() {
+  const v = document.getElementById('sync-key').value.trim();
+  if (!v && !syncKey()) { toast('Paste a key first'); return; }
+  if (v) localStorage.setItem(SYNC_KEY_STORE, v);
+  toast('Sync key saved');
+  hardRefresh().then(flushQueue);
+}
+
+// ═══ RP: EDIT / DELETE A PAST SESSION ══════════════════════
+let rpEditDraft = null;
+function vRPEdit() {
+  const log = rpLogById(ctx.logId);
+  if (!log) return '<div class="empty-note">Session not found.</div>';
+  if (!rpEditDraft || rpEditDraft.id !== log.id) rpEditDraft = JSON.parse(JSON.stringify(log));
+  const cards = rpSessionDef(log.session).exercises.map(function(ex) {
+    const rows = rpEditDraft.sets.map(function(st, idx) {
+      if (st.exercise !== ex.id) return '';
+      const v = function(x){ return x == null ? '' : esc(x); };
+      return '<div class="rp-set' + (st.done ? ' logged' : '') + '" id="ed-' + idx + '">' +
+        '<div class="rp-setno">' + (rpEditDraft.sets.slice(0, idx + 1).filter(function(z){ return z.exercise === ex.id; }).length) + '</div>' +
+        '<input type="number" inputmode="decimal" step="0.5" min="0" placeholder="kg" value="' + v(st.weight) + '" oninput="rpEdIn(' + idx + ',\'weight\',this.value)">' +
+        '<input type="number" inputmode="numeric" min="0" placeholder="reps" value="' + v(st.reps) + '" oninput="rpEdIn(' + idx + ',\'reps\',this.value)">' +
+        '<input type="number" inputmode="numeric" min="0" max="10" placeholder="RIR" value="' + v(st.rir) + '" oninput="rpEdIn(' + idx + ',\'rir\',this.value)">' +
+        '<button class="rp-tick" onclick="rpEdTick(' + idx + ')">✓</button></div>';
+    }).join('');
+    if (!rows) return '';
+    return '<div class="ex-card ex-open"><div class="ex-head" style="cursor:default"><div class="ex-head-l"><div class="ex-exname"><span class="rp-ord">' + ex.order + '</span>' + esc(ex.name) + '</div></div></div>' +
+      '<div class="ex-body"><div class="rp-grid-head"><div>Set</div><div>kg</div><div>Reps</div><div>RIR</div><div>Done</div></div>' + rows + '</div></div>';
+  }).join('');
+  return '<div class="top-bar"><div class="back-btn" onclick="rpEditDraft=null;nav(\'history\')">←</div>' +
+    '<div class="top-label">Edit Day ' + log.session + '</div></div>' +
+    '<div class="pad" style="margin-bottom:14px"><div style="font-size:13px;color:var(--muted2);line-height:1.6">' + rpPosLabel(log.block, log.week, log.session) + ' · ' + fmtDate(log.date) +
+    '<br>Changes feed future weight suggestions and sync to Airtable.</div></div>' +
+    '<div class="ex-wrap">' + cards + '</div>' +
+    '<div class="pad"><button class="save-btn" onclick="rpEditSave()">Save Changes</button>' +
+    '<button class="del-btn" onclick="rpEditDelete()">Delete this session</button><div style="height:30px"></div></div>';
+}
+function rpEdIn(idx, field, val) { rpEditDraft.sets[idx][field] = val; }
+function rpEdTick(idx) {
+  const st = rpEditDraft.sets[idx];
+  st.done = !st.done;
+  const row = document.getElementById('ed-' + idx);
+  if (row) row.classList.toggle('logged', st.done);
+}
+function rpEditSave() {
+  const logs = rpLogs();
+  const i = logs.findIndex(function(l){ return l.id === rpEditDraft.id; });
+  if (i < 0) return;
+  rpEditDraft.sets.forEach(function(st) {
+    st.weight = rpNum(st.weight, true); st.reps = rpNum(st.reps); st.rir = rpNum(st.rir);
+    if (st.done && st.reps == null) st.done = false;
+  });
+  rpEditDraft.rev = (logs[i].rev || 0) + 1;
+  rpEditDraft.editedAt = new Date().toISOString();
+  logs[i] = rpEditDraft;
+  localStorage.setItem(RP_LOGS_KEY, JSON.stringify(logs));
+  rpEditDraft = null;
+  toast('Session updated ✓');
+  nav('history');
+  rpSync();
+}
+function rpEditDelete() {
+  if (!confirm('Delete this session? Its sets stop counting towards suggestions. Your position stays where it is – change it in Manage if needed.')) return;
+  const id = rpEditDraft.id;
+  localStorage.setItem(RP_LOGS_KEY, JSON.stringify(rpLogs().filter(function(l){ return l.id !== id; })));
+  const d = rpDeleted(); d.push(id); localStorage.setItem(RP_DELETED_KEY, JSON.stringify(d));
+  if (RP.pendingFeedback === id) RP.pendingFeedback = null;
+  if (RP.deloadOffer === id) RP.deloadOffer = null;
+  rpSave();
+  rpEditDraft = null;
+  toast('Session deleted');
+  nav('history');
+  rpSync();
+}
+
+// ═══ RP: SET POSITION BY HAND ══════════════════════════════
+function rpPositionHtml() {
+  if (!rpActive()) return '';
+  const next = rpNextSession();
+  const opt = function(vals, cur, lab) { return vals.map(function(v){ return '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + lab(v) + '</option>'; }).join(''); };
+  const blocks = []; for (let b = 1; b <= Math.max(RP.block + 1, 6); b++) blocks.push(b);
+  return '<div class="section-head" style="margin-top:20px">RP position</div>' +
+    '<div class="form-grid-3"><div class="form-field"><label class="form-label">Block</label><select id="pos-block">' + opt(blocks, RP.block, String) + '</select></div>' +
+    '<div class="form-field"><label class="form-label">Week</label><select id="pos-week">' + opt([1, 2, 3, 4, 5], RP.week, function(w){ return w === 5 ? '5 (deload)' : String(w); }) + '</select></div>' +
+    '<div class="form-field"><label class="form-label">Next day</label><select id="pos-day">' + opt(RP_ORDER, next, function(d){ return 'Day ' + d; }) + '</select></div></div>' +
+    '<button class="add-btn" style="margin-top:0" onclick="rpSetPosition()">Set position</button>';
+}
+function rpSetPosition() {
+  const b = parseInt(document.getElementById('pos-block').value, 10);
+  const w = parseInt(document.getElementById('pos-week').value, 10);
+  const d = document.getElementById('pos-day').value;
+  if (rpLive) {
+    if (!confirm('This discards the session in progress. Continue?')) return;
+    rpLive = null; rpLiveSave(); stopTimer();
+  }
+  if (b !== RP.block) Object.keys(RP.bonusSets).forEach(function(m){ RP.bonusSets[m] = 0; });
+  RP.block = b; RP.week = w;
+  RP.lastCompletedSession = d === 'A' ? null : RP_ORDER[RP_ORDER.indexOf(d) - 1];
+  RP.deloadOffer = null;
+  rpSave();
+  toast('Next: ' + rpPosLabel(b, w, d));
+  render();
+}
 function rpSyncStatus() {
   const logs = rpLogs(), synced = rpSynced();
   const n = logs.filter(function(l){ return synced.indexOf(l.id) >= 0; }).length;
