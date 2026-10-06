@@ -1,7 +1,7 @@
 {
   "name": "Clean Slate · Gym Tracker",
   "short_name": "Gym Tracker",
-  "description": "Push/Pull/Legs/Full Body training tracker with live progression, Airtable sync, and offline support.",
+  "description": "RP Recomp 3-day full-body programme and PPL training tracker with progression, set logging and offline support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
