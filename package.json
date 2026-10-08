@@ -1,0 +1,11 @@
+{
+  "name": "clean-slate-gym-tracker",
+  "private": true,
+  "description": "Browser tests for the Clean Slate gym tracker PWA",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 \"tests/*.test.js\""
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
