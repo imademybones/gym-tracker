@@ -269,6 +269,78 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 .fb-opt.sel { background:rgba(232,255,71,.1); border-color:var(--accent); color:var(--accent); font-weight:500; }
 .fb-opt.sel.bad { background:rgba(255,92,92,.1); border-color:var(--danger); color:var(--danger); }
 
+
+/* RUN-STRENGTH (v10) */
+:root { --cp:#ffb347; }
+.cp-text { color:var(--cp); font-weight:500; }
+.today-card.cp-card { border-color:rgba(255,179,71,.45); }
+.wday.is-cp { border-color:rgba(255,179,71,.5); }
+.wday.is-cp.is-today { border-color:var(--accent); }
+.wday-tick.bad { color:var(--danger); }
+.rp-banner.warn { border-color:rgba(255,92,92,.45); }
+.rp-badge.nn { color:var(--cp); border-color:rgba(255,179,71,.45); }
+.wk-row { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--wc,var(--border2)); border-radius:9px; padding:11px 12px; display:flex; align-items:center; gap:11px; margin-bottom:6px; }
+.wk-row.is-today { border-color:var(--accent); border-left-color:var(--wc); }
+.wk-row.is-cp { background:rgba(255,179,71,.05); }
+.wk-row.st-done .wk-status { color:var(--done); }
+.wk-row.st-missed .wk-status, .wk-row.st-skipped .wk-status { color:var(--danger); }
+.wk-row.st-partial .wk-status { color:var(--cp); }
+.wk-row.st-today .wk-status { color:var(--accent); }
+.wk-row.st-rest { opacity:.6; }
+.wk-day { width:34px; text-align:center; flex-shrink:0; }
+.wk-dn { font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.wk-dd { font-family:'Bebas Neue',sans-serif; font-size:22px; line-height:1; color:var(--muted2); }
+.wk-main { flex:1; min-width:0; }
+.wk-slot { font-size:14px; font-weight:400; }
+.wk-slot .cp-text { font-size:11px; }
+.wk-detail { font-size:12px; color:var(--muted2); margin-top:2px; line-height:1.4; }
+.wk-status { font-size:11px; color:var(--muted); flex-shrink:0; text-align:right; }
+.wk-spacer { width:33px; flex-shrink:0; }
+.effort-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+.effort-grid .fb-opt { padding:10px 0; }
+textarea { resize:vertical; }
+.rt { position:fixed; inset:0; z-index:200; background:var(--black); display:flex; flex-direction:column; padding:calc(16px + env(safe-area-inset-top)) 20px calc(26px + env(safe-area-inset-bottom)); --rk:var(--cardio); max-width:640px; margin:0 auto; overflow-y:auto; }
+.rt.k-jog, .rt.k-run, .rt.k-stride { --rk:var(--accent); }
+.rt.k-walk, .rt.k-easy { --rk:var(--cardio); }
+.rt.k-done { --rk:var(--done); }
+.rt.paused { --rk:var(--muted2); }
+.rt-top { display:flex; align-items:center; gap:12px; }
+.rt-eyebrow { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted2); line-height:1.5; min-width:0; }
+.rt-mid { flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center; padding:20px 0; }
+.rt-kind { font-family:'Bebas Neue',sans-serif; font-size:64px; line-height:1; color:var(--rk); letter-spacing:.04em; }
+.rt-big { font-family:'Bebas Neue',sans-serif; font-size:min(34vw,170px); line-height:.95; color:var(--rk); font-variant-numeric:tabular-nums; }
+.rt-sub { font-size:14px; color:var(--muted2); margin-top:10px; line-height:1.5; }
+.rt-desc { font-family:'Bebas Neue',sans-serif; font-size:40px; line-height:1.05; color:var(--cardio); }
+.rt-barwrap { height:4px; background:var(--border); border-radius:4px; margin:26px 0 10px; overflow:hidden; }
+.rt-barfill { height:100%; background:var(--rk); width:0; }
+.rt-total { font-size:13px; color:var(--muted2); font-variant-numeric:tabular-nums; }
+.rt-btns { display:flex; gap:10px; }
+.rt-btns .rp-btn { padding:16px; font-size:15px; }
+.rt-btns .rp-btn.primary { background:var(--rk); border-color:var(--rk); }
+.phase-card { background:var(--card); border:1px solid var(--border); border-radius:11px; padding:14px 16px; margin-bottom:8px; }
+.phase-card.current { border-color:rgba(61,255,160,.35); }
+.phase-card.locked { opacity:.6; }
+.phase-card.open { border-color:var(--accent); }
+.phase-h { display:flex; justify-content:space-between; gap:10px; font-size:14px; font-weight:400; }
+.phase-lock { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted2); white-space:nowrap; }
+.phase-g { font-size:12px; color:var(--muted2); margin-top:6px; line-height:1.55; }
+.gate-list { margin-top:10px; }
+.gate-item { display:flex; gap:10px; align-items:flex-start; font-size:13px; padding:7px 0; border-top:1px solid var(--border); }
+.gate-box { width:20px; height:20px; border-radius:5px; border:1.5px solid var(--border2); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; }
+.gate-item.ok .gate-box { background:var(--done); border-color:var(--done); color:#000; }
+.gate-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+.bench-row { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:11px 12px; display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.bench-d { font-size:11px; color:var(--muted); width:70px; flex-shrink:0; }
+.bench-l { flex:1; min-width:0; font-size:13px; }
+.bench-t { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--accent); flex-shrink:0; }
+.add-box { margin:6px 0 4px; }
+.add-box summary { list-style:none; cursor:pointer; padding:13px; border:1.5px dashed var(--border2); border-radius:9px; color:var(--muted2); font-size:13px; text-align:center; }
+.add-box summary::-webkit-details-marker { display:none; }
+.wchart { width:100%; height:auto; display:block; background:var(--card); border:1px solid var(--border); border-radius:9px; }
+.wlegend { display:flex; gap:14px; font-size:11px; color:var(--muted2); margin-top:6px; flex-wrap:wrap; }
+.wlegend i { display:inline-block; width:10px; height:3px; border-radius:2px; margin-right:5px; vertical-align:middle; }
+.form-grid-3 > *, .form-grid-2 > * { min-width:0; }
+
 /* loading */
 .loading { text-align:center; padding:80px 20px; color:var(--muted); font-size:13px; letter-spacing:.1em; text-transform:uppercase; animation:pulse 1.4s infinite; }
 </style>
@@ -282,7 +354,9 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 </div>
 
 <nav class="bottom-nav" id="bnav" style="display:none">
-  <div class="nav-item" data-nav="home" onclick="nav('home')"><div class="nav-ico">▦</div><div class="nav-lbl">Home</div></div>
+  <div class="nav-item" data-nav="home" onclick="nav('home')"><div class="nav-ico">▦</div><div class="nav-lbl">Today</div></div>
+  <div class="nav-item" data-nav="week" onclick="nav('week')"><div class="nav-ico">☷</div><div class="nav-lbl">Week</div></div>
+  <div class="nav-item" data-nav="progress" onclick="nav('progress')"><div class="nav-ico">◭</div><div class="nav-lbl">Progress</div></div>
   <div class="nav-item" data-nav="history" onclick="nav('history')"><div class="nav-ico">◷</div><div class="nav-lbl">History</div></div>
   <div class="nav-item" data-nav="manage" onclick="nav('manage')"><div class="nav-ico">✎</div><div class="nav-lbl">Manage</div></div>
 </nav>
@@ -292,7 +366,7 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 <script>
 'use strict';
 // ═══════════════════════════════════════════════════════════
-// CLEAN SLATE v9 — Gym Tracker
+// CLEAN SLATE v10 — Gym Tracker
 // Backend: Airtable via Cloudflare Worker (PPL), localStorage (RP Recomp)
 // v4: swap-day scheduling, PWA installability (manifest + service
 //     worker + icons), dedicated app icon
@@ -308,6 +382,11 @@ input:focus,select:focus,textarea:focus { outline:none; border-color:var(--accen
 //     restore onto a fresh device.
 // v9: optional sync key sent to the Worker (X-Sync-Key); edit or delete
 //     past RP sessions (synced to Airtable); set RP position by hand.
+// v10: Run-Strength (Phases 1–2) gym programme + 800 m comeback run plan,
+//     active by default. Weekly Mon–Sun schedule with swaps, run/walk
+//     interval timer, run log, repeat-week prompt, checkpoints and phase
+//     gates, benchmarks, weigh-ins, JSON export/import. Stored data is
+//     versioned (cleanslate_schema) with migrations.
 // ═══════════════════════════════════════════════════════════
 const WORKER_URL = 'https://gym-tracker.stephen-nolan85.workers.dev';
 const CACHE_KEY = 'cleanslate_v3_cache';
@@ -452,20 +531,26 @@ function nextStep(f, minReps) {
 // ── navigation ─────────────────────────────────────────────
 function nav(v, c) {
   if (view === 'manage' && v !== 'manage') swapArmedDay = null;
+  if (view === 'week' && v !== 'week') swapArmedSlot = null;
   view = v; ctx = c || {};
   render();
   window.scrollTo(0, 0);
   document.querySelectorAll('.nav-item').forEach(function(n){
-    n.classList.toggle('active', n.dataset.nav === (v === 'home' || v === 'history' || v === 'manage' ? v : ''));
+    n.classList.toggle('active', n.dataset.nav === (['home', 'week', 'progress', 'history', 'manage'].indexOf(v) >= 0 ? v : ''));
   });
 }
 
 // ── render root ────────────────────────────────────────────
 function render() {
   const app = document.getElementById('app');
-  document.getElementById('bnav').style.display = 'flex';
+  document.getElementById('bnav').style.display = view === 'runTimer' ? 'none' : 'flex';
   stopTimerUI();
   if (view === 'home') app.innerHTML = vHome();
+  else if (view === 'rsSession') app.innerHTML = vRSSession();
+  else if (view === 'runTimer') app.innerHTML = vRunTimer();
+  else if (view === 'runLog') app.innerHTML = vRunLog();
+  else if (view === 'week') app.innerHTML = vWeek();
+  else if (view === 'progress') app.innerHTML = vProgress();
   else if (view === 'session') app.innerHTML = vSession();
   else if (view === 'rpSession') app.innerHTML = vRPSession();
   else if (view === 'rpFeedback') app.innerHTML = vRPFeedback();
@@ -477,10 +562,12 @@ function render() {
   else if (view === 'editWorkout') app.innerHTML = vEditWorkout();
   else if (view === 'editExercise') app.innerHTML = vEditExercise();
   if (timer) showTimerUI();
+  if (view === 'runTimer' && runLive) runPaint(runElapsed(), runPos(runElapsed()));
 }
 
 // ═══ HOME ══════════════════════════════════════════════════
 function vHome() {
+  if (rsActive()) return vHomeRS();
   if (rpActive()) return vHomeRP();
   const today = new Date().getDay();
   const dateStr = new Date().toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' });
@@ -523,7 +610,7 @@ function vHome() {
   const stats = homeStats();
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v9</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v10</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">TRAIN<em>TODAY.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad"><div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
@@ -938,7 +1025,7 @@ async function loadHistory() {
 }
 
 function vHistory() {
-  const sess = (DB.sessions || []).filter(function(r){ return !rpParseRemote(r); }).concat(rpHistoryRecords()).sort(function(a,b){ return (b.fields.Date||'').localeCompare(a.fields.Date||''); });
+  const sess = (DB.sessions || []).filter(function(r){ return !rpParseRemote(r); }).concat(rpHistoryRecords()).concat(rsHistoryRecords()).concat(runHistoryRecords()).sort(function(a,b){ return (b.fields.Date||'').localeCompare(a.fields.Date||''); });
   if (!sess.length) return '<div class="top-bar"><div class="top-label">History</div></div>' +
     '<div class="empty-note">No sessions yet.<br>Your first completed workout will land here.</div>';
 
@@ -955,9 +1042,11 @@ function vHistory() {
     const rows = groups[mk].map(function(s) {
       const f = s.fields;
       const w = wo(f.WorkoutId);
-      const col = s.rp ? 'var(--accent)' : (w ? (w.fields.Color || '#888') : '#888');
+      const col = s.rp || s.rs ? 'var(--accent)' : s.run ? 'var(--cardio)' : (w ? (w.fields.Color || '#888') : '#888');
       let body = '';
       if (s.rp) body = rpHistBody(s.rp);
+      else if (s.rs) body = rsHistBody(s.rs);
+      else if (s.run) body = runHistBody(s.run);
       else try {
         const log = JSON.parse(f.Log || 'null');
         if (Array.isArray(log)) {
@@ -1004,7 +1093,8 @@ function vManage() {
       '<button class="icon-btn' + (swapArmedDay === i ? ' is-armed' : '') + '" onclick="tapSwap(' + i + ')">⇄</button></div>';
   }).join('');
 
-  const progs = [{ id: RP_ID, name: RP_PROGRAM.name, sub: '3 sessions · A → B → C · backed up to Airtable' },
+  const progs = [{ id: RS_ID, name: RS_PROGRAM.name, sub: 'Gym A · B · C around the 800 m run plan · stored on this phone' },
+    { id: RP_ID, name: RP_PROGRAM.name, sub: '3 sessions · A → B → C · backed up to Airtable' },
     { id: PPL_ID, name: 'PPL split', sub: 'Weekly schedule · synced with Airtable' }].map(function(p) {
     const on = RP.activeProgram === p.id;
     return '<div class="mrow" style="cursor:pointer' + (on ? ';border-color:var(--accent)' : '') + '" onclick="setProgramme(\'' + p.id + '\')">' +
@@ -1014,10 +1104,11 @@ function vManage() {
   }).join('');
 
   return '<div class="top-bar"><div class="top-label">Manage</div></div><div class="pad">' +
-    '<div class="section-head">Programme</div>' + progs + rpPositionHtml() +
+    '<div class="section-head">Programme</div>' + progs + rpPositionHtml() + rsSettingsHtml() +
     '<div class="section-head" style="margin-top:26px">PPL workouts</div>' + rows +
     '<button class="add-btn" onclick="nav(\'editWorkout\',{id:null})">+ Add workout</button>' +
     '<div class="section-head" style="margin-top:26px">Weekly schedule</div>' + schedRows +
+    '<div class="section-head" style="margin-top:26px">Backup</div>' + backupHtml() +
     '<div class="section-head" style="margin-top:26px">Data</div>' +
     '<button class="add-btn" onclick="hardRefresh()">↻ Refresh from Airtable</button>' +
     '<button class="add-btn" onclick="rpSyncNow()">⇅ Back up RP sessions now</button>' +
@@ -1319,6 +1410,57 @@ const RP_PROGRAM = {
   ]
 };
 
+// ═══ STORED SCHEMA (v10) ═══════════════════════════════════
+// cleanslate_schema holds the version of the stored data. Migrations run in
+// order on load (and after an import), before any state is read. Each one
+// must leave existing logs readable – add keys, never drop them.
+const SCHEMA_KEY = 'cleanslate_schema';
+const SCHEMA_VERSION = 1;
+const PREMIGRATION_KEY = 'cleanslate_premigration_v9';
+const RS_ID = 'run-strength';
+const RS_STATE_KEY = 'cleanslate_rs_state';
+const RS_LOGS_KEY = 'cleanslate_rs_logs';
+const RS_LIVE_KEY = 'cleanslate_rs_live';
+const RUN_STATE_KEY = 'cleanslate_run_state';
+const RUN_LOGS_KEY = 'cleanslate_run_logs';
+const RUN_LIVE_KEY = 'cleanslate_run_live';
+const BENCH_KEY = 'cleanslate_benchmarks';
+const WEIGHT_KEY = 'cleanslate_weights';
+const RUN_PLAN_START = '2026-10-26';
+
+function appKeys() {
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && (k.indexOf('cleanslate_') === 0 || k.indexOf('cs3_') === 0)) out.push(k);
+  }
+  return out;
+}
+const MIGRATIONS = {
+  // v9 → v10: keep every v9 key as it is, make Run-Strength the active
+  // programme and set up the run plan. RP Recomp keeps its block, week and logs.
+  1: function() {
+    const st = loadJSON(RP_STATE_KEY) || {};
+    st.activeProgram = RS_ID;
+    localStorage.setItem(RP_STATE_KEY, JSON.stringify(st));
+    if (!loadJSON(RUN_STATE_KEY)) localStorage.setItem(RUN_STATE_KEY, JSON.stringify({ start: RUN_PLAN_START, repeats: [], decisions: {}, swaps: {} }));
+  }
+};
+function runMigrations() {
+  try {
+    let v = parseInt(localStorage.getItem(SCHEMA_KEY) || '0', 10) || 0;
+    if (v >= SCHEMA_VERSION) return;
+    // raw copy of the pre-v10 data, once, in case anything needs recovering by hand
+    if (v === 0 && !localStorage.getItem(PREMIGRATION_KEY)) {
+      const snap = {};
+      appKeys().forEach(function(k){ snap[k] = localStorage.getItem(k); });
+      if (Object.keys(snap).length) localStorage.setItem(PREMIGRATION_KEY, JSON.stringify({ at: new Date().toISOString(), data: snap }));
+    }
+    while (v < SCHEMA_VERSION) { v++; MIGRATIONS[v](); localStorage.setItem(SCHEMA_KEY, String(v)); }
+  } catch (e) { console.warn('Migration failed', e); }
+}
+runMigrations();
+
 // ── rp storage ─────────────────────────────────────────────
 function loadJSON(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
 function rpDefaultState() {
@@ -1483,7 +1625,7 @@ function vHomeRP() {
   const lastLine = lastLog ? 'Last session: ' + fmtDate(lastLog.date) + ' · Day ' + lastLog.session + ' (' + (daysSince(lastLog.date) === 0 ? 'today' : daysSince(lastLog.date) === 1 ? 'yesterday' : daysSince(lastLog.date) + ' days ago') + ')' : 'No sessions yet – first up is Day A.';
 
   return '<div class="home-head">' +
-    '<div class="home-eyebrow"><span>Clean Slate · v9</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-eyebrow"><span>Clean Slate · v10</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
     '<div class="home-title">RP<em>RECOMP.</em></div>' +
     '<div class="home-date">' + dateStr + '</div></div>' +
     '<div class="pad">' + rpDeloadOfferHtml(false) + rpPendingBanner() + banner +
@@ -1975,7 +2117,7 @@ function rpBonusHtml(week) {
 function setProgramme(id) {
   RP.activeProgram = id;
   rpSave();
-  toast((id === RP_ID ? 'RP Recomp' : 'PPL') + ' is now active');
+  toast((id === RS_ID ? 'Run-Strength' : id === RP_ID ? 'RP Recomp' : 'PPL') + ' is now active');
   render();
 }
 
@@ -2040,7 +2182,9 @@ async function rpSync(loud) {
       const merged = logs.concat(missing.map(function(r){ return r.rp; })).sort(function(a, b){ return a.id - b.id; });
       localStorage.setItem(RP_LOGS_KEY, JSON.stringify(merged));
       if (freshDevice) {
+        const keep = RP.activeProgram;
         RP = Object.assign(rpDefaultState(), missing[missing.length - 1].state || {});
+        RP.activeProgram = keep;
         RP.pendingFeedback = null; RP.deloadOffer = null;
         rpSave();
       }
@@ -2176,6 +2320,1146 @@ function rpSyncStatus() {
   return n + ' of ' + logs.length + ' RP sessions backed up' + (last ? ' · checked ' + new Date(last).toLocaleString('en-AU', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }) : '');
 }
 
+// ═══ RUN-STRENGTH + 800 m COMEBACK (v10) ═══════════════════
+// A second localStorage programme alongside RP Recomp. The gym programme and
+// the run plan are data (phases → sessions / weeks), so later phases slot in
+// the same way. Gym logs, run logs, benchmarks and weigh-ins stay on this
+// phone (no Airtable) – Manage → Backup exports them all.
+
+// ── dates (local, ISO yyyy-mm-dd) ──────────────────────────
+const WEEK_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function isoOf(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function dateOf(iso) { const p = iso.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function addDays(iso, n) { const d = dateOf(iso); d.setDate(d.getDate() + n); return isoOf(d); }
+function daysBetween(a, b) { return Math.round((dateOf(b) - dateOf(a)) / 86400000); }
+function dayIdxOf(iso) { return (dateOf(iso).getDay() + 6) % 7; }   // Mon = 0
+function mondayOf(iso) { return addDays(iso, -dayIdxOf(iso)); }
+function fmtDay(iso) { const p = iso.split('-'); return WEEK_DAYS[dayIdxOf(iso)] + ' ' + parseInt(p[2], 10) + ' ' + MONTHS[parseInt(p[1], 10) - 1]; }
+function fmtDur(sec) {
+  if (sec == null || isNaN(sec)) return '';
+  sec = Math.round(sec);
+  const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
+}
+// "24:30", "1:02:10" or plain minutes "24" / "24.5"
+function parseDur(txt) {
+  txt = String(txt || '').trim();
+  if (!txt) return null;
+  if (txt.indexOf(':') >= 0) {
+    const p = txt.split(':').map(function(x){ return parseInt(x, 10); });
+    if (p.some(isNaN)) return null;
+    return p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p[0] * 60 + p[1];
+  }
+  const n = parseFloat(txt);
+  return isNaN(n) ? null : Math.round(n * 60);
+}
+function fmtDist(m) { return m == null ? '–' : m >= 1000 ? (m / 1000) + ' km' : m + ' m'; }
+
+// ── weekly schedule ────────────────────────────────────────
+const RS_WEEK = ['gymA', 'run1', 'gymB', 'run2', 'gymC', 'run3', 'rest'];   // Mon → Sun
+const SLOT_INFO = {
+  gymA: { kind: 'gym', session: 'A', label: 'Gym A' },
+  gymB: { kind: 'gym', session: 'B', label: 'Gym B' },
+  gymC: { kind: 'gym', session: 'C', label: 'Gym C' },
+  run1: { kind: 'run', label: 'Run 1' },
+  run2: { kind: 'run', label: 'Run 2' },
+  run3: { kind: 'run', label: 'Run 3' },
+  rest: { kind: 'rest', label: 'Rest' }
+};
+
+// ── gym programme ──────────────────────────────────────────
+// progression: 'upper' = the RP rule (all sets at the top of the range → add
+// load, else +1 rep); 'lower' = add load only when every set hits the top of
+// the range at RIR ≥ 2; 'hold' = +5 s once every set holds the target;
+// 'none' = bodyweight, no load suggestion. equip 'db' uses the smallest
+// dumbbell step from Manage. variants: the user picks one, remembered.
+const RS_PROGRAM = {
+  id: RS_ID,
+  name: 'Run-Strength (Phases 1–2)',
+  // Later phases are added as entries here: Phase 3 swaps Gym A to heavy
+  // 3 × 3–5 plus box jumps and adds plyometrics to Gym C; Phase 4 drops to
+  // two sessions (and RS_WEEK gets a matching week shape).
+  phases: [
+    { id: 1, label: 'Phases 1–2', sessions: [
+      { id: 'A', name: 'Lower strength', exercises: [
+        { id: 'rs-squat', order: '1', name: 'Back squat or leg press', sets: 3, reps: [5, 5], progression: 'lower', rest: 180, increment: 2.5,
+          variants: [{ id: 'back-squat', name: 'Back squat', increment: 2.5 }, { id: 'leg-press', name: 'Leg press', increment: 5 }], notes: 'Pick one and stick with it' },
+        { id: 'rs-rdl', order: '2', name: 'Romanian deadlift', sets: 3, reps: [8, 8], progression: 'lower', rest: 150, increment: 2.5, notes: 'Hinge to a full hamstring stretch' },
+        { id: 'rs-bss', order: '3', name: 'Bulgarian split squat', sets: 3, reps: [8, 8], perSide: 'each leg', progression: 'lower', rest: 90, equip: 'db', notes: 'Weight is per dumbbell' },
+        { id: 'rs-standing-calf', order: '4', name: 'Standing calf raise (straight knee)', sets: 3, reps: [12, 15], progression: 'lower', rest: 60, increment: 2.5, nonNegotiable: true, notes: 'Full stretch at the bottom, pause at the top' },
+        { id: 'rs-side-plank', order: '5', name: 'Side plank', sets: 3, hold: 30, perSide: 'each side', progression: 'hold', rest: 45, notes: 'Straight line from ear to ankle' }
+      ]},
+      { id: 'B', name: 'Upper + core', exercises: [
+        { id: 'rs-bench', order: '1', name: 'Bench press', sets: 3, reps: [6, 8], progression: 'upper', rest: 150, increment: 2.5, notes: 'Controlled lowering, touch and press' },
+        { id: 'rs-row', order: '2', name: 'Barbell or cable row', sets: 3, reps: [8, 10], progression: 'upper', rest: 120, increment: 2.5,
+          variants: [{ id: 'barbell-row', name: 'Barbell row' }, { id: 'cable-row', name: 'Cable row' }], notes: 'Squeeze the shoulder blades back' },
+        { id: 'rs-ohp', order: '3', name: 'Overhead press', sets: 3, reps: [8, 8], progression: 'upper', rest: 120, increment: 2.5, notes: 'Ribs down, glutes tight' },
+        { id: 'rs-pull', order: '4', name: 'Pull-ups or lat pulldown', sets: 3, reps: [10, 10], progression: 'upper', rest: 120, increment: 2.5,
+          variants: [{ id: 'pull-ups', name: 'Pull-ups', bodyweight: true, max: true, progression: 'none' }, { id: 'lat-pulldown', name: 'Lat pulldown' }], notes: 'Pull-ups: max reps each set' },
+        { id: 'rs-dead-bug', order: '5', name: 'Dead bug', sets: 3, reps: [10, 10], perSide: 'each side', bodyweight: true, progression: 'none', rest: 45, notes: 'Lower back pressed into the floor' },
+        { id: 'rs-pallof', order: '6', name: 'Pallof press', sets: 3, reps: [10, 10], perSide: 'each side', progression: 'upper', rest: 45, increment: 2.5, notes: 'Resist the rotation, press slowly' }
+      ]},
+      { id: 'C', name: 'Single-leg + calves', exercises: [
+        { id: 'rs-step-up', order: '1', name: 'Step-ups (knee-height box)', sets: 3, reps: [10, 10], perSide: 'each leg', progression: 'lower', rest: 90, equip: 'db', notes: 'Drive through the top foot, no push-off' },
+        { id: 'rs-sl-rdl', order: '2', name: 'Single-leg RDL', sets: 3, reps: [8, 8], perSide: 'each leg', progression: 'lower', rest: 90, equip: 'db', notes: 'Hips square, slow and balanced' },
+        { id: 'rs-ham', order: '3', name: 'Hamstring curl or assisted Nordic', sets: 3, reps: [8, 8], progression: 'lower', rest: 90, increment: 2.5,
+          variants: [{ id: 'ham-curl', name: 'Hamstring curl' }, { id: 'nordic', name: 'Assisted Nordic', bodyweight: true, progression: 'none' }], notes: 'Nordic: lower as slowly as you can' },
+        { id: 'rs-seated-calf', order: '4', name: 'Seated calf raise (bent knee)', sets: 3, reps: [15, 15], progression: 'lower', rest: 60, increment: 2.5, nonNegotiable: true, notes: 'Targets the soleus – key for running' },
+        { id: 'rs-sl-calf', order: '5', name: 'Single-leg calf raise, slow lowering', sets: 3, reps: [10, 10], perSide: 'each leg', progression: 'lower', rest: 60, equip: 'db', nonNegotiable: true, notes: '3 s down. Bodyweight first – leave kg blank' },
+        { id: 'rs-incline-db', order: '6', name: 'Incline DB press', sets: 3, setsLabel: '2–3', reps: [10, 12], progression: 'upper', rest: 90, equip: 'db', notes: '2–3 sets – the third is optional' },
+        { id: 'rs-face-pull', order: '7', name: 'Face pulls', sets: 3, setsLabel: '2–3', reps: [10, 12], progression: 'upper', rest: 60, increment: 2.5, notes: '2–3 sets – the third is optional' }
+      ]}
+    ]}
+  ]
+};
+const RS_SESSION_NAMES = { A: 'Lower strength', B: 'Upper + core', C: 'Single-leg + calves' };
+
+// ── run plan ───────────────────────────────────────────────
+// Each week: the session for all three runs, with per-slot overrides and an
+// optional checkpoint. Session shapes:
+//   { type: 'intervals', jog: s, walk: s, reps: n }
+//   { type: 'continuous', min: [lo, hi], strides: n, easy: bool }
+//   { type: 'parkrun', distanceM: 5000 }
+const RUN_PHASES = [
+  { id: 1, name: 'Phase 1 – Comeback', gate: 'Gate: 40 min continuous, calm calves, parkrun baseline', weeks: [
+    { week: 1, session: { type: 'intervals', jog: 60, walk: 60, reps: 12 } },
+    { week: 2, session: { type: 'intervals', jog: 120, walk: 60, reps: 8 } },
+    { week: 3, session: { type: 'intervals', jog: 180, walk: 60, reps: 7 } },
+    { week: 4, session: { type: 'intervals', jog: 180, walk: 60, reps: 5 }, note: 'Easier week' },
+    { week: 5, session: { type: 'intervals', jog: 300, walk: 60, reps: 5 } },
+    { week: 6, session: { type: 'intervals', jog: 480, walk: 60, reps: 3 } },
+    { week: 7, session: { type: 'intervals', jog: 600, walk: 60, reps: 3 } },
+    { week: 8, session: { type: 'intervals', jog: 600, walk: 60, reps: 2 }, slots: { run3: { type: 'continuous', min: [20, 20] } },
+      checkpoint: { slot: 'run3', kind: 'continuous', label: '20 min continuous' } },
+    { week: 9, session: { type: 'continuous', min: [20, 25], strides: 4 } },
+    { week: 10, session: { type: 'continuous', min: [25, 30], strides: 4 } },
+    { week: 11, session: { type: 'continuous', min: [30, 35] }, slots: { run3: { type: 'continuous', min: [40, 40], strides: 6 } } },
+    { week: 12, session: { type: 'continuous', min: [30, 30], easy: true }, slots: { run3: { type: 'parkrun', distanceM: 5000 } },
+      checkpoint: { slot: 'run3', kind: 'parkrun', distanceM: 5000, label: 'parkrun 5 km baseline' } }
+  ]},
+  { id: 2, name: 'Phase 2 – Aerobic base + strength', gate: 'Gate out: parkrun under 21:00, no niggles for 6 weeks', weeks: [] },
+  { id: 3, name: 'Phase 3 – Speed endurance', gate: 'Gate out: 800 m time trial under 2:10', weeks: [] },
+  { id: 4, name: 'Phase 4 – Race-sharpening', gate: 'Targets: 2:05, then sub-2:00', weeks: [] }
+];
+const RUN_WEEKS = RUN_PHASES[0].weeks;
+const STRIDE_SEC = 15, STRIDE_EASY_SEC = 45;
+
+// ── storage ────────────────────────────────────────────────
+function rsDefaultState() { return { phase: 1, variants: {}, dbStep: 2.5 }; }
+let RS = Object.assign(rsDefaultState(), loadJSON(RS_STATE_KEY) || {});
+let rsLive = loadJSON(RS_LIVE_KEY);
+function rsSave() { localStorage.setItem(RS_STATE_KEY, JSON.stringify(RS)); }
+function rsLiveSave() { if (rsLive) localStorage.setItem(RS_LIVE_KEY, JSON.stringify(rsLive)); else localStorage.removeItem(RS_LIVE_KEY); }
+function rsLogs() { return loadJSON(RS_LOGS_KEY) || []; }
+function rsActive() { return RP.activeProgram === RS_ID; }
+function runState() {
+  return Object.assign({ start: RUN_PLAN_START, repeats: [], decisions: {}, swaps: {} }, loadJSON(RUN_STATE_KEY) || {});
+}
+function runStateSave(st) { localStorage.setItem(RUN_STATE_KEY, JSON.stringify(st)); }
+function runLogs() { return (loadJSON(RUN_LOGS_KEY) || []).slice().sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id; }); }
+function runLogsSave(l) { localStorage.setItem(RUN_LOGS_KEY, JSON.stringify(l)); }
+function benchmarks() { return loadJSON(BENCH_KEY) || []; }
+function benchSave(b) { localStorage.setItem(BENCH_KEY, JSON.stringify(b)); }
+function weighIns() { return (loadJSON(WEIGHT_KEY) || []).slice().sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; }); }
+
+// ── plan maths ─────────────────────────────────────────────
+// Calendar week n (1-based from the start date) minus the repeats chosen at
+// or before it. A repeat therefore shifts everything after it, checkpoints
+// included, without rewriting anything.
+function planWeekFor(ws) {
+  const st = runState();
+  const cal = Math.floor(daysBetween(st.start, ws) / 7) + 1;
+  if (cal < 1) return cal;
+  return cal - st.repeats.filter(function(r){ return r <= ws; }).length;
+}
+function weekSlots(ws) { const s = runState().swaps[ws]; return Array.isArray(s) && s.length === 7 ? s : RS_WEEK; }
+function runSessionFor(pw, slot) {
+  const wk = RUN_WEEKS[pw - 1];
+  if (!wk) return null;
+  return { week: pw, session: (wk.slots && wk.slots[slot]) || wk.session, note: wk.note || '',
+    checkpoint: wk.checkpoint && wk.checkpoint.slot === slot ? wk.checkpoint : null };
+}
+// last calendar week that maps to plan week pw, assuming no further repeats
+function weekStartForPlanWeek(pw) {
+  const st = runState();
+  let found = null;
+  for (let k = 0; k < 120; k++) {
+    const ws = addDays(st.start, 7 * k), p = planWeekFor(ws);
+    if (p === pw) found = ws;
+    if (p > pw) break;
+  }
+  return found;
+}
+function checkpointDates() {
+  return RUN_WEEKS.filter(function(w){ return w.checkpoint; }).map(function(w) {
+    const ws = weekStartForPlanWeek(w.week);
+    return { week: w.week, label: w.checkpoint.label, kind: w.checkpoint.kind, date: ws ? addDays(ws, weekSlots(ws).indexOf(w.checkpoint.slot)) : null };
+  });
+}
+function runDesc(s) {
+  if (!s) return '';
+  const unit = function(sec){ return sec % 60 ? sec + ' s' : (sec / 60) + ' min'; };
+  if (s.type === 'intervals') return unit(s.jog) + ' jog / ' + unit(s.walk) + ' walk × ' + s.reps;
+  if (s.type === 'parkrun') return 'parkrun ' + fmtDist(s.distanceM) + ', steady';
+  return (s.min[0] === s.min[1] ? s.min[0] : s.min[0] + '–' + s.min[1]) + ' min continuous' + (s.easy ? ', easy' : '') +
+    (s.strides ? ' + ' + s.strides + ' × ' + STRIDE_SEC + ' s strides' : '');
+}
+function runTotalMin(s) {
+  if (s.type === 'intervals') return Math.round((s.jog + s.walk) * s.reps / 60);
+  if (s.type === 'continuous') return s.min[0] + (s.strides ? Math.round(s.strides * (STRIDE_SEC + STRIDE_EASY_SEC) / 60) : 0);
+  return null;
+}
+
+// ── week status ────────────────────────────────────────────
+function inWeek(date, ws) { const d = daysBetween(ws, date); return d >= 0 && d < 7; }
+function slotLog(ws, slot) {
+  const info = SLOT_INFO[slot];
+  if (info.kind === 'gym') return rsLogs().filter(function(l){ return l.slot === slot && inWeek(l.date, ws); }).pop() || null;
+  if (info.kind === 'run') return runLogs().filter(function(l){ return l.slot === slot && inWeek(l.date, ws); }).pop() || null;
+  return null;
+}
+// status: done | partial | skipped | missed | today | upcoming | rest
+function dayStatus(ws, i) {
+  const slot = weekSlots(ws)[i], date = addDays(ws, i), today = todayKey(), info = SLOT_INFO[slot];
+  const log = slotLog(ws, slot);
+  let status;
+  if (info.kind === 'rest') status = 'rest';
+  else if (log) status = info.kind === 'gym' ? 'done' : (log.completed === 'yes' ? 'done' : log.completed === 'partial' ? 'partial' : 'skipped');
+  else if (date < today) status = 'missed';
+  else status = date === today ? 'today' : 'upcoming';
+  const pw = planWeekFor(ws);
+  const run = info.kind === 'run' ? runSessionFor(pw, slot) : null;
+  return { slot: slot, date: date, status: status, log: log, info: info, run: run, planWeek: pw };
+}
+const STATUS_LABEL = { done: '✓ Done', partial: '◐ Partial', skipped: '✕ Skipped', missed: 'Missed', today: 'Today', upcoming: '', rest: '' };
+
+// ── progression prompts ────────────────────────────────────
+function runRepeatPrompt() {
+  const st = runState(), ws = mondayOf(todayKey()), prev = addDays(ws, -7);
+  if (st.decisions[ws] || runLive) return null;
+  const ppw = planWeekFor(prev);
+  if (ppw < 1 || ppw > RUN_WEEKS.length) return null;
+  const logs = runLogs().filter(function(l){ return inWeek(l.date, prev) && /^run/.test(l.slot); });
+  const done = {};
+  logs.forEach(function(l){ if (l.completed === 'yes') done[l.slot] = 1; });
+  const n = Object.keys(done).length;
+  const calves = logs.some(function(l){ return l.calves === 'tight' || l.calves === 'sore'; });
+  if (n >= 3 && !calves) return null;
+  return { ws: ws, week: ppw, done: n, calves: calves };
+}
+function runDecide(repeat) {
+  const o = runRepeatPrompt();
+  if (!o) return;
+  const st = runState();
+  st.decisions[o.ws] = repeat ? 'repeat' : 'carry';
+  if (repeat && st.repeats.indexOf(o.ws) < 0) st.repeats.push(o.ws);
+  runStateSave(st);
+  toast(repeat ? 'Repeating week ' + o.week + ' – checkpoints move back a week' : 'On to week ' + planWeekFor(o.ws));
+  render();
+}
+function runSoreWarning() {
+  const l = runLogs(), a = l[l.length - 1], b = l[l.length - 2];
+  return !!(a && b && a.calves === 'sore' && b.calves === 'sore');
+}
+function runPromptsHtml() {
+  const o = runRepeatPrompt();
+  let html = '';
+  if (o) {
+    const why = [];
+    if (o.done < 3) why.push(o.done + ' of 3 runs completed');
+    if (o.calves) why.push('calves logged tight or sore');
+    html += '<div class="rp-banner" id="repeat-prompt"><div class="rp-banner-t"><b>Repeat last week?</b><br>Week ' + o.week + ': ' + why.join(' · ') + '.</div>' +
+      '<div class="rp-banner-btns"><button class="rp-btn primary" onclick="runDecide(true)">Repeat</button><button class="rp-btn" onclick="runDecide(false)">Carry on</button></div></div>';
+  }
+  return html;
+}
+function soreWarnHtml() {
+  return runSoreWarning() ? '<div class="rp-banner warn" id="sore-warning"><div class="rp-banner-t" style="margin:0"><b>Calves sore on your last two runs.</b><br>Take a rest day today or walk only – don\'t push through it.</div></div>' : '';
+}
+
+// ═══ TODAY (Run-Strength home) ═════════════════════════════
+function vHomeRS() {
+  const today = todayKey(), ws = mondayOf(today), idx = dayIdxOf(today);
+  const dateStr = new Date().toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' });
+  const d = dayStatus(ws, idx);
+  let card;
+  if (rsLive) {
+    card = rsCardHtml(rsLive.session, rsLive.slot, 'In progress', 'Resume →');
+  } else if (runLive) {
+    const rl = runLive;
+    card = '<div class="today-card" style="--wc:var(--cardio)" onclick="nav(\'runTimer\',{slot:\'' + rl.slot + '\'})">' +
+      '<div class="tc-eyebrow">In progress · Week ' + rl.planWeek + ' · ' + SLOT_INFO[rl.slot].label + '</div>' +
+      '<div class="tc-row"><div class="tc-name">' + SLOT_INFO[rl.slot].label + '</div><div class="tc-cta">Resume →</div></div>' +
+      '<div class="tc-sub">' + esc(runDesc(rl.session)) + '</div></div>';
+  } else if (d.info.kind === 'gym') {
+    card = d.log ? doneCardHtml(d.info.label + ' – ' + RS_SESSION_NAMES[d.info.session], 'Gym session logged. Recover well.')
+      : rsCardHtml(d.info.session, d.slot, 'Today\'s session', 'Start →');
+  } else if (d.info.kind === 'run') {
+    card = runCardHtml(d);
+  } else {
+    card = '<div class="today-card" style="cursor:default"><div class="tc-eyebrow">Today</div><div class="tc-row"><div class="tc-name">Rest Day</div></div>' +
+      '<div class="tc-sub">Full rest. Eat well, sleep, come back fresh.</div></div>';
+  }
+
+  const pw = planWeekFor(ws);
+  const chips = WEEK_DAYS.map(function(name, i) {
+    const s = dayStatus(ws, i);
+    const col = s.info.kind === 'run' ? 'var(--cardio)' : s.info.kind === 'gym' ? 'var(--accent)' : '';
+    const tick = s.status === 'done' ? '✓' : s.status === 'partial' ? '◐' : s.status === 'missed' || s.status === 'skipped' ? '✕' : '';
+    const cp = s.run && s.run.checkpoint ? ' is-cp' : '';
+    return '<div class="wday' + (i === idx ? ' is-today' : '') + cp + '" style="--wc:' + col + '" onclick="nav(\'week\')">' +
+      '<div class="wday-name">' + name + '</div><div class="wday-type">' + esc(s.info.label.replace('Gym ', 'Gym ')) + '</div>' +
+      '<div class="wday-tick' + (tick === '✕' ? ' bad' : '') + '">' + tick + '</div></div>';
+  }).join('');
+
+  const next = checkpointDates().filter(function(c){ return c.date && c.date >= today; })[0];
+  const runsDone = runLogs().filter(function(l){ return l.completed === 'yes'; }).length;
+  const weekLabel = pw < 1 ? 'Run plan starts ' + fmtDay(runState().start) : pw > RUN_WEEKS.length ? 'Phase 1 run plan complete' : 'Run plan · Phase 1 · Week ' + pw + ' of ' + RUN_WEEKS.length;
+
+  return '<div class="home-head">' +
+    '<div class="home-eyebrow"><span>Clean Slate · v10</span><span class="sync-dot' + (online?'':' offline') + '"></span></div>' +
+    '<div class="home-title">RUN<em>STRONG.</em></div>' +
+    '<div class="home-date">' + dateStr + '</div></div>' +
+    '<div class="pad">' + runPromptsHtml() + (d.info.kind === 'run' && !d.log ? soreWarnHtml() : '') +
+    '<div class="section-head">Today</div>' + card +
+    '<div class="section-head">This week</div><div class="week-strip">' + chips + '</div>' +
+    '<div class="rp-line" style="margin:-14px 0 24px">' + esc(weekLabel) +
+    (next ? ' · Next checkpoint <b class="cp-text">' + fmtDay(next.date) + '</b> – ' + esc(next.label) : '') + '</div>' +
+    '<div class="section-head">Progress</div>' +
+    '<div class="home-stats"><div class="hstat"><div class="hstat-val">' + runsDone + '</div><div class="hstat-label">Runs</div></div>' +
+    '<div class="hstat"><div class="hstat-val">' + rsLogs().length + '</div><div class="hstat-label">Gym</div></div>' +
+    '<div class="hstat"><div class="hstat-val">' + (pw < 1 ? '–' : Math.min(pw, RUN_WEEKS.length)) + '</div><div class="hstat-label">Plan week</div></div></div></div>';
+}
+function rsCardHtml(session, slot, eyebrow, cta) {
+  const def = rsSessionDef(session);
+  return '<div class="today-card" style="--wc:var(--accent)" onclick="rsStart(\'' + session + '\',\'' + slot + '\')">' +
+    '<div class="tc-eyebrow">' + esc(eyebrow) + ' · ' + esc(RS_PROGRAM.name) + '</div>' +
+    '<div class="tc-row"><div class="tc-name">Gym ' + session + '</div><div class="tc-cta">' + cta + '</div></div>' +
+    '<div class="tc-sub"><b style="color:var(--text);font-weight:500">' + esc(def.name) + '</b> · ' + def.exercises.length + ' exercises<br>' +
+    esc(def.exercises.map(function(e){ return e.name; }).join(', ')) + '</div></div>';
+}
+function doneCardHtml(title, sub) {
+  return '<div class="today-card" style="--wc:var(--done);cursor:default"><div class="tc-eyebrow">Today · done</div>' +
+    '<div class="tc-row"><div class="tc-name">' + esc(title) + '</div><div class="tc-cta">✓ Done</div></div><div class="tc-sub">' + esc(sub) + '</div></div>';
+}
+function runCardHtml(d) {
+  if (d.log) return doneCardHtml(d.info.label, 'Run logged: ' + ({ yes: 'completed', partial: 'partly completed', no: 'not done' })[d.log.completed] + (d.log.durationSec ? ' · ' + fmtDur(d.log.durationSec) : '') + '.');
+  if (d.planWeek < 1) return '<div class="today-card" style="--wc:var(--cardio);cursor:default"><div class="tc-eyebrow">' + d.info.label + '</div>' +
+    '<div class="tc-row"><div class="tc-name">' + d.info.label + '</div></div><div class="tc-sub">The run plan starts ' + fmtDay(runState().start) + '.</div></div>';
+  if (!d.run) return '<div class="today-card" style="--wc:var(--cardio);cursor:default"><div class="tc-eyebrow">' + d.info.label + '</div>' +
+    '<div class="tc-row"><div class="tc-name">' + d.info.label + '</div></div><div class="tc-sub">Phase 1 is complete. Add the Phase 2 weeks when you get there.</div></div>';
+  const cp = d.run.checkpoint;
+  const mins = runTotalMin(d.run.session);
+  return '<div class="today-card' + (cp ? ' cp-card' : '') + '" style="--wc:' + (cp ? 'var(--cp)' : 'var(--cardio)') + '" onclick="nav(\'runTimer\',{slot:\'' + d.slot + '\'})">' +
+    '<div class="tc-eyebrow">Week ' + d.run.week + ' · ' + d.info.label + (cp ? ' · <span class="cp-text">★ Checkpoint</span>' : '') + '</div>' +
+    '<div class="tc-row"><div class="tc-name">' + d.info.label + '</div><div class="tc-cta">Start →</div></div>' +
+    '<div class="tc-sub"><b style="color:var(--text);font-weight:500">' + esc(runDesc(d.run.session)) + '</b>' + (mins ? ' · ' + mins + ' min' : '') +
+    (d.run.note ? '<br>' + esc(d.run.note) : '') + (cp ? '<br>Checkpoint: ' + esc(cp.label) : '') + '</div></div>';
+}
+
+// ═══ WEEK VIEW ═════════════════════════════════════════════
+let swapArmedSlot = null;   // day index armed for a swap (current week only)
+function vWeek() {
+  const today = todayKey(), cur = mondayOf(today);
+  const off = ctx.off || 0, ws = addDays(cur, 7 * off), pw = planWeekFor(ws);
+  const isCur = off === 0;
+  const rows = WEEK_DAYS.map(function(name, i) {
+    const s = dayStatus(ws, i);
+    const cp = s.run && s.run.checkpoint;
+    let detail = '';
+    if (s.info.kind === 'gym') detail = RS_SESSION_NAMES[s.info.session];
+    else if (s.info.kind === 'run') detail = s.planWeek < 1 ? 'Plan not started' : s.run ? runDesc(s.run.session) : 'Phase 1 complete';
+    else detail = 'Full rest';
+    const canSwap = isCur && s.date >= today && !s.log && !(rsLive && rsLive.slot === s.slot) && !(runLive && runLive.slot === s.slot);
+    const startable = isCur && s.info.kind !== 'rest' && !s.log && !(s.info.kind === 'run' && !s.run);
+    const col = s.info.kind === 'run' ? 'var(--cardio)' : s.info.kind === 'gym' ? 'var(--accent)' : 'var(--muted)';
+    return '<div class="wk-row' + (s.date === today ? ' is-today' : '') + (cp ? ' is-cp' : '') + ' st-' + s.status + '" style="--wc:' + (cp ? 'var(--cp)' : col) + '">' +
+      '<div class="wk-day"><div class="wk-dn">' + name + '</div><div class="wk-dd">' + parseInt(s.date.slice(8), 10) + '</div></div>' +
+      '<div class="wk-main"' + (startable ? ' onclick="weekOpen(' + i + ')" style="cursor:pointer"' : '') + '>' +
+      '<div class="wk-slot">' + esc(s.info.label) + (cp ? ' <span class="cp-text">★ Checkpoint</span>' : '') + '</div>' +
+      '<div class="wk-detail">' + esc(detail) + (cp ? ' · ' + esc(cp.label) : '') + '</div></div>' +
+      '<div class="wk-status">' + STATUS_LABEL[s.status] + '</div>' +
+      (canSwap ? '<button class="icon-btn' + (swapArmedSlot === i ? ' is-armed' : '') + '" onclick="weekSwapTap(' + i + ')" aria-label="Swap">⇄</button>' : '<span class="wk-spacer"></span>') +
+      '</div>';
+  }).join('');
+  const label = pw < 1 ? 'Before the run plan' : pw > RUN_WEEKS.length ? 'After Phase 1' : 'Plan week ' + pw + (RUN_WEEKS[pw - 1].note ? ' · ' + RUN_WEEKS[pw - 1].note : '');
+  return '<div class="top-bar"><div class="back-btn" onclick="nav(\'week\',{off:' + (off - 1) + '})">‹</div>' +
+    '<div class="top-label" style="text-align:center">' + fmtDay(ws).slice(4) + ' – ' + fmtDay(addDays(ws, 6)).slice(4) + '</div>' +
+    '<div class="back-btn" onclick="nav(\'week\',{off:' + (off + 1) + '})">›</div></div>' +
+    '<div class="pad">' + (isCur ? runPromptsHtml() : '') +
+    '<div class="section-head">' + esc(label) + (isCur ? '' : ' · <a class="rp-link accent" style="padding:0" onclick="nav(\'week\')">This week</a>') + '</div>' +
+    rows +
+    (isCur ? '<div class="rp-line" style="margin-bottom:24px">' + (swapArmedSlot != null ? 'Now tap ⇄ on the day to swap with.' : 'Tap ⇄ on two days to swap their sessions this week. Missed runs are never made up.') + '</div>' : '') +
+    '</div>';
+}
+function weekSwapTap(i) {
+  if (swapArmedSlot == null) { swapArmedSlot = i; render(); return; }
+  if (swapArmedSlot === i) { swapArmedSlot = null; render(); return; }
+  const ws = mondayOf(todayKey()), st = runState();
+  const slots = weekSlots(ws).slice();
+  const a = swapArmedSlot, t = slots[a];
+  slots[a] = slots[i]; slots[i] = t;
+  st.swaps[ws] = slots;
+  runStateSave(st);
+  swapArmedSlot = null;
+  toast(SLOT_INFO[slots[i]].label + ' ⇄ ' + SLOT_INFO[slots[a]].label);
+  render();
+}
+function weekOpen(i) {
+  const ws = mondayOf(todayKey()), slot = weekSlots(ws)[i], info = SLOT_INFO[slot];
+  if (info.kind === 'gym') rsStart(info.session, slot);
+  else if (info.kind === 'run') nav('runTimer', { slot: slot });
+}
+
+// ═══ GYM SESSION ═══════════════════════════════════════════
+function rsPhaseDef() { return RS_PROGRAM.phases.find(function(p){ return p.id === RS.phase; }) || RS_PROGRAM.phases[0]; }
+function rsSessionDef(id) { return rsPhaseDef().sessions.find(function(s){ return s.id === id; }); }
+function rsExDef(id) {
+  for (const p of RS_PROGRAM.phases) for (const s of p.sessions) { const e = s.exercises.find(function(x){ return x.id === id; }); if (e) return e; }
+  return null;
+}
+// the exercise as done today: variant fields override the base exercise
+function rsEff(ex, variantId) {
+  if (!ex.variants) return ex;
+  const v = ex.variants.find(function(x){ return x.id === variantId; }) || ex.variants[0];
+  return Object.assign({}, ex, v, { id: ex.id, variant: v.id, name: v.name, baseName: ex.name });
+}
+function rsInc(e) { return e.equip === 'db' ? (parseFloat(RS.dbStep) || 2.5) : (e.increment || 2.5); }
+function rsCols(e) {
+  const c = [];
+  if (!e.bodyweight && !e.hold) c.push('kg');
+  c.push(e.hold ? 'sec' : 'reps');
+  if (!e.hold && (e.progression === 'lower' || !e.bodyweight)) c.push('rir');
+  return c;
+}
+function rsTargetLabel(e) {
+  const sets = (e.setsLabel || e.sets) + ' × ';
+  const side = e.perSide ? ' ' + e.perSide : '';
+  if (e.hold) return sets + e.hold + ' s' + side;
+  if (e.max) return sets + 'max';
+  return sets + (e.reps[0] === e.reps[1] ? e.reps[0] : e.reps[0] + '–' + e.reps[1]) + side;
+}
+function rsFindPerf(e, logs) {
+  for (let i = logs.length - 1; i >= 0; i--) {
+    const sets = logs[i].sets.filter(function(s) {
+      return s.exercise === e.id && s.done && (s.variant || null) === (e.variant || null) && (e.hold ? s.sec != null : s.reps != null);
+    });
+    if (sets.length) return { log: logs[i], sets: sets };
+  }
+  return null;
+}
+function rsSuggest(e, logs) {
+  const last = rsFindPerf(e, logs);
+  if (e.hold) {
+    if (!last) return { target: e.hold, hint: 'Hold ' + e.hold + ' s' + (e.perSide ? ' ' + e.perSide : '') };
+    const tgt = last.sets[0].target || e.hold;
+    const all = last.sets.every(function(s){ return s.sec >= tgt; });
+    return all ? { target: tgt + 5, up: true, hint: '+5 s – you held ' + tgt + ' s on every set' } : { target: tgt, hint: 'Same hold – build to ' + tgt + ' s on every set' };
+  }
+  if (e.bodyweight) {
+    if (e.max) return { hint: last ? 'Last time: ' + last.sets.map(function(s){ return s.reps; }).join(', ') + ' – beat one set' : 'Max reps each set, clean form' };
+    return { hint: e.progression === 'lower' ? 'Bodyweight – stop with 2+ reps in reserve' : 'Bodyweight – slow and controlled' };
+  }
+  const inc = rsInc(e), top = e.reps[1];
+  const range = e.reps[0] === top ? top + ' reps' : e.reps[0] + '–' + top + ' reps';
+  if (!last) return { weight: null, hint: 'Find a weight for ' + range + (e.progression === 'lower' ? ' with 2+ reps in reserve' : '') };
+  const wt = Math.max.apply(null, last.sets.map(function(s){ return s.weight || 0; }));
+  const allTop = last.sets.every(function(s){ return s.reps >= top; });
+  if (e.progression === 'lower') {
+    const rirOk = last.sets.every(function(s){ return s.rir != null && s.rir >= 2; });
+    if (allTop && rirOk) return { weight: round2(wt + inc), up: true, hint: '+' + inc + ' kg – every set hit ' + top + ' at RIR 2+' };
+    if (allTop) return { weight: wt || null, hint: 'Same weight – you hit ' + top + ' but under RIR 2. Never to failure.' };
+    return { weight: wt || null, hint: 'Same weight – build to ' + top + ' reps at RIR 2+' };
+  }
+  if (allTop) return { weight: round2(wt + inc), up: true, hint: '+' + inc + ' kg – you hit the top of the range last time' };
+  return { weight: wt || null, hint: 'Same weight – aim for +1 rep' };
+}
+function rsNewSets(e, logs, n) {
+  const sug = rsSuggest(e, logs), sets = [];
+  for (let i = 0; i < n; i++) sets.push({ weight: sug.weight == null ? '' : String(sug.weight), reps: '', sec: e.hold ? String(sug.target) : '', rir: '', done: false });
+  return sets;
+}
+function rsStart(session, slot) {
+  if (runLive) { toast('Finish or discard the run in progress first'); return; }
+  if (rsLive && rsLive.session !== session) {
+    if (!confirm('Gym ' + rsLive.session + ' is in progress. Discard it and start Gym ' + session + '?')) return;
+    rsLive = null;
+  }
+  if (!rsLive) {
+    const logs = rsLogs();
+    rsLive = { phase: RS.phase, session: session, slot: slot || ('gym' + session), date: todayKey(), startedAt: new Date().toISOString(), ex: {} };
+    rsSessionDef(session).exercises.forEach(function(ex) {
+      const variant = ex.variants ? (RS.variants[ex.id] || ex.variants[0].id) : null;
+      rsLive.ex[ex.id] = { variant: variant, skipped: false, sets: rsNewSets(rsEff(ex, variant), logs, ex.sets) };
+    });
+    rsLiveSave();
+  }
+  nav('rsSession');
+}
+function vRSSession() {
+  if (!rsLive) return '<div class="empty-note">No session in progress.</div>';
+  const def = rsSessionDef(rsLive.session), logs = rsLogs();
+  const t = rsTotals();
+  return '<div class="top-bar"><div class="back-btn" onclick="nav(\'home\')">←</div>' +
+    '<div class="top-label" style="color:var(--accent)">Gym ' + rsLive.session + '</div>' +
+    '<div class="top-action" style="color:var(--muted2)" onclick="rsDiscard()">Discard</div></div>' +
+    '<div class="pad" style="margin-bottom:12px;font-size:13px;color:var(--muted2)">' + esc(def.name) + ' · ' + esc(RS_PROGRAM.name) + '</div>' +
+    '<div class="rp-tip">Lower body: log RIR every set and stop with 2+ reps in reserve – never to failure.</div>' +
+    '<div class="ex-wrap">' + def.exercises.map(function(ex){ return rsExCard(ex, logs); }).join('') + '</div>' +
+    '<div style="height:150px"></div>' +
+    '<div class="finish-bar"><div class="finish-prog" id="fprog">' + t.done + ' of ' + t.total + ' sets ticked</div>' +
+    '<div class="finish-prog-bar"><div class="finish-prog-fill" id="fpf" style="width:' + t.pct + '%"></div></div>' +
+    '<button class="finish-btn" id="fbtn" onclick="rsFinish()"' + (t.done === 0 ? ' disabled' : '') + '>' + rpFinishLabel(t) + '</button></div>';
+}
+function rsExCard(ex, logs) {
+  const st = rsLive.ex[ex.id], e = rsEff(ex, st.variant);
+  const sug = rsSuggest(e, logs), last = rsFindPerf(e, logs), cols = rsCols(e);
+  const allDone = !st.skipped && st.sets.length > 0 && st.sets.every(function(s){ return s.done; });
+  const grid = 'grid-template-columns:26px ' + cols.map(function(){ return '1fr'; }).join(' ') + ' 44px';
+  const head = { kg: 'kg', reps: 'Reps', sec: 'Sec', rir: 'RIR' };
+  const fmtSet = function(s){ return e.hold ? s.sec + ' s' : (s.weight != null && !e.bodyweight ? s.weight + ' × ' : '') + s.reps + (s.rir != null ? ' @' + s.rir : ''); };
+  const lastHtml = last ? '<div class="rp-line">Last time <span style="color:var(--muted)">(' + fmtDate(last.log.date) + ')</span>: <b>' + last.sets.map(fmtSet).join(', ') + '</b></div>' : '<div class="rp-line">Last time: –</div>';
+  const sugHtml = '<div class="rp-line">' + (sug.weight != null ? 'Suggested: <span class="sug">' + sug.weight + ' kg</span> · ' : '') + esc(sug.hint) + '</div>';
+  const variants = ex.variants ? '<div class="fb-seg" style="margin:12px 0 0">' + ex.variants.map(function(v) {
+    return '<button class="fb-opt' + (v.id === e.variant ? ' sel' : '') + '" onclick="rsPickVariant(\'' + ex.id + '\',\'' + v.id + '\')">' + esc(v.name) + '</button>';
+  }).join('') + '</div>' : '';
+  const rows = st.sets.map(function(s, i) {
+    const cells = cols.map(function(c) {
+      const ph = c === 'kg' ? 'kg' : c === 'sec' ? String(sug.target || e.hold) : c === 'rir' ? (e.progression === 'lower' ? '2+' : '–') :
+        (e.max ? 'max' : last && last.sets[i] ? String(last.sets[i].reps) : (e.reps[0] === e.reps[1] ? String(e.reps[0]) : e.reps[0] + '–' + e.reps[1]));
+      const field = c === 'kg' ? 'weight' : c;
+      return '<input id="rsi-' + ex.id + '-' + i + '-' + field + '" type="number" inputmode="' + (c === 'kg' ? 'decimal' : 'numeric') + '"' + (c === 'kg' ? ' step="0.5"' : '') +
+        ' min="0" placeholder="' + esc(ph) + '" value="' + esc(s[field]) + '" oninput="rsIn(\'' + ex.id + '\',' + i + ',\'' + field + '\',this.value)">';
+    }).join('');
+    return '<div class="rp-set' + (s.done ? ' logged' : '') + '" id="rss-' + ex.id + '-' + i + '" style="' + grid + '"><div class="rp-setno">' + (i + 1) + '</div>' + cells +
+      '<button class="rp-tick" onclick="rsTick(\'' + ex.id + '\',' + i + ')">✓</button></div>';
+  }).join('');
+  const meta = rsTargetLabel(e) + (e.rest ? ' · Rest ' + fmtRest(e.rest) : '') + (e.progression === 'lower' ? ' · RIR 2+' : '');
+  return '<div class="ex-card ex-open' + (allDone ? ' ex-done' : '') + (st.skipped ? ' rp-skipped' : '') + '" id="ec-' + ex.id + '">' +
+    '<div class="ex-head" onclick="toggleEx(\'' + ex.id + '\')"><div class="ex-head-l">' +
+    '<div class="ex-exname" style="white-space:normal"><span class="rp-ord">' + ex.order + '</span>' + esc(ex.variants ? e.name : ex.name) +
+    (ex.nonNegotiable ? '<span class="rp-badge nn">Non-negotiable</span>' : '') + '</div>' +
+    '<div class="ex-tmeta">' + esc(meta) + '</div></div>' +
+    '<div style="display:flex;align-items:center;gap:8px"><span class="ex-done-badge">✓ Done</span><span class="ex-chev">▾</span></div></div>' +
+    '<div class="ex-body">' +
+    (st.skipped ? '<div class="rp-line">Skipped this session.</div>' :
+      variants + '<div class="ex-note">' + esc(ex.notes) + '</div>' + lastHtml + sugHtml +
+      '<div class="rp-grid-head" style="' + grid + '"><div>Set</div>' + cols.map(function(c){ return '<div>' + head[c] + '</div>'; }).join('') + '<div></div></div>' + rows) +
+    '<div class="rp-links">' + (st.skipped ? '<span></span>' : '<button class="rp-link accent" onclick="rsAddSet(\'' + ex.id + '\')">+ Add set</button>') +
+    '<button class="rp-link" onclick="rsSkip(\'' + ex.id + '\')">' + (st.skipped ? 'Undo skip' : 'Skip exercise') + '</button></div>' +
+    '</div></div>';
+}
+function rsTotals() {
+  let done = 0, total = 0;
+  Object.keys(rsLive.ex).forEach(function(k) {
+    if (rsLive.ex[k].skipped) return;
+    rsLive.ex[k].sets.forEach(function(s){ total++; if (s.done) done++; });
+  });
+  return { done: done, total: total, pct: total ? Math.round(done / total * 100) : 0 };
+}
+function rsUpdateBar() {
+  const t = rsTotals();
+  const fb = document.getElementById('fbtn'), fp = document.getElementById('fprog'), ff = document.getElementById('fpf');
+  if (fb) { fb.disabled = t.done === 0; fb.textContent = rpFinishLabel(t); }
+  if (fp) fp.textContent = t.done + ' of ' + t.total + ' sets ticked';
+  if (ff) ff.style.width = t.pct + '%';
+}
+function rsRefreshCard(exId) {
+  const c = document.getElementById('ec-' + exId);
+  if (!c) return;
+  const open = c.classList.contains('ex-open');
+  c.outerHTML = rsExCard(rsExDef(exId), rsLogs());
+  if (!open) document.getElementById('ec-' + exId).classList.remove('ex-open');
+  rsUpdateBar();
+}
+function rsIn(exId, i, field, val) {
+  const sets = rsLive.ex[exId].sets;
+  if (field === 'weight') {
+    const old = sets[i].weight;
+    for (let j = i + 1; j < sets.length; j++) {
+      if (!sets[j].done && sets[j].weight === old) {
+        sets[j].weight = val;
+        const inp = document.getElementById('rsi-' + exId + '-' + j + '-weight');
+        if (inp) inp.value = val;
+      }
+    }
+  }
+  sets[i][field] = val;
+  rsLiveSave();
+}
+function rsPickVariant(exId, vid) {
+  const st = rsLive.ex[exId];
+  if (st.variant === vid) return;
+  if (st.sets.some(function(s){ return s.done; }) && !confirm('Switch exercise? Ticked sets on this one are cleared.')) return;
+  st.variant = vid;
+  RS.variants[exId] = vid; rsSave();
+  st.sets = rsNewSets(rsEff(rsExDef(exId), vid), rsLogs(), st.sets.length);
+  rsLiveSave();
+  rsRefreshCard(exId);
+}
+function rsTick(exId, i) {
+  const st = rsLive.ex[exId], s = st.sets[i], e = rsEff(rsExDef(exId), st.variant);
+  const main = e.hold ? 'sec' : 'reps';
+  if (!s.done) {
+    if (s[main] === '' || isNaN(parseFloat(s[main]))) {
+      toast(e.hold ? 'Enter seconds held first' : 'Enter reps first');
+      const r = document.getElementById('rsi-' + exId + '-' + i + '-' + main); if (r) r.focus();
+      return;
+    }
+    if (e.progression === 'lower' && rsCols(e).indexOf('rir') >= 0 && (s.rir === '' || isNaN(parseFloat(s.rir)))) {
+      toast('Log RIR for lower-body sets');
+      const r = document.getElementById('rsi-' + exId + '-' + i + '-rir'); if (r) r.focus();
+      return;
+    }
+  }
+  s.done = !s.done;
+  rsLiveSave();
+  const row = document.getElementById('rss-' + exId + '-' + i);
+  if (row) row.classList.toggle('logged', s.done);
+  const card = document.getElementById('ec-' + exId);
+  if (card) card.classList.toggle('ex-done', st.sets.every(function(x){ return x.done; }));
+  rsUpdateBar();
+  if (s.done) {
+    vibrate(20);
+    if (e.progression === 'lower' && parseFloat(s.rir) < 2) toast('Keep 2+ reps in reserve – never to failure');
+    if (e.rest) startTimer(e.rest, e.name);
+  } else stopTimer();
+}
+function rsAddSet(exId) {
+  const sets = rsLive.ex[exId].sets, prev = sets[sets.length - 1];
+  sets.push({ weight: prev ? prev.weight : '', reps: '', sec: prev ? prev.sec : '', rir: '', done: false });
+  rsLiveSave();
+  rsRefreshCard(exId);
+}
+const CALF_PROMPT = 'Calf work is non-negotiable for the running comeback – it protects your calves and Achilles.';
+function rsSkip(exId) {
+  const st = rsLive.ex[exId], ex = rsExDef(exId);
+  if (!st.skipped && ex.nonNegotiable && !confirm(CALF_PROMPT + '\n\nSkip ' + ex.name + ' anyway?')) return;
+  st.skipped = !st.skipped;
+  rsLiveSave();
+  rsRefreshCard(exId);
+}
+function rsDiscard() {
+  if (!confirm('Discard this session? Anything entered will be lost.')) return;
+  stopTimer();
+  rsLive = null; rsLiveSave();
+  nav('home');
+}
+function rsFinish() {
+  const t = rsTotals();
+  if (t.done === 0) return;
+  const def = rsSessionDef(rsLive.session);
+  const calfLeft = def.exercises.filter(function(ex) {
+    const st = rsLive.ex[ex.id];
+    return ex.nonNegotiable && !st.skipped && st.sets.some(function(s){ return !s.done; });
+  });
+  if (calfLeft.length && !confirm(CALF_PROMPT + '\n\nUnticked: ' + calfLeft.map(function(e){ return e.name; }).join(', ') + '. Finish anyway?')) return;
+  const left = t.total - t.done;
+  if (left > 0 && !calfLeft.length && !confirm(left + ' set' + (left === 1 ? '' : 's') + ' not ticked – saved as skipped. Finish Gym ' + rsLive.session + '?')) return;
+  stopTimer();
+  const sets = [], skipped = [], before = rsLogs();
+  def.exercises.forEach(function(ex) {
+    const st = rsLive.ex[ex.id], e = rsEff(ex, st.variant);
+    if (st.skipped) skipped.push(ex.id);
+    st.sets.forEach(function(s) {
+      const out = { exercise: ex.id, variant: st.variant || null, weight: e.bodyweight || e.hold ? null : rpNum(s.weight, true), reps: e.hold ? null : rpNum(s.reps),
+        sec: e.hold ? rpNum(s.sec) : null, rir: rpNum(s.rir), done: !st.skipped && s.done };
+      if (e.hold) out.target = rsSuggest(e, before).target;   // the planned hold, not what was typed
+      sets.push(out);
+    });
+  });
+  const log = { id: Date.now(), date: todayKey(), program: RS_ID, phase: rsLive.phase, session: rsLive.session, slot: rsLive.slot,
+    startedAt: rsLive.startedAt, finishedAt: new Date().toISOString(), sets: sets, skipped: skipped };
+  const logs = before.concat([log]);
+  localStorage.setItem(RS_LOGS_KEY, JSON.stringify(logs));
+  rsLive = null; rsLiveSave();
+  rsShowDone(log, logs);
+}
+function rsShowDone(log, logs) {
+  const list = rsSessionDef(log.session).exercises.map(function(ex) {
+    const sets = log.sets.filter(function(s){ return s.exercise === ex.id; });
+    const done = sets.filter(function(s){ return s.done; }).length;
+    const e = rsEff(ex, sets[0] && sets[0].variant);
+    const sug = rsSuggest(e, logs);
+    let chg;
+    if ((log.skipped || []).indexOf(ex.id) >= 0) chg = '<span class="prog-chg pc-hold">skipped</span>';
+    else if (sug.up && done) chg = '<span class="prog-chg pc-wt">' + (e.hold ? sug.target + ' s' : sug.weight + ' kg') + ' next 🔺</span>';
+    else chg = '<span class="prog-chg ' + (done === sets.length ? 'pc-rep' : 'pc-hold') + '">' + done + '/' + sets.length + ' sets</span>';
+    return '<div class="prog-item"><div class="prog-name">' + esc(e.name) + '</div>' + chg + '</div>';
+  }).join('');
+  document.getElementById('modal-inner').innerHTML = '<div class="modal-title">Gym ' + log.session + ' Done 💪</div>' +
+    '<div class="modal-sub">' + esc(RS_SESSION_NAMES[log.session]) + ' · next-time loads are set.</div>' + list +
+    '<button class="modal-btn" onclick="closeModal()">Back to Today</button>';
+  document.getElementById('modal').classList.add('open');
+}
+function rsSettingsHtml() {
+  if (!rsActive()) return '';
+  const steps = [1, 1.25, 2, 2.5];
+  return '<div class="section-head" style="margin-top:20px">Run-Strength settings</div>' +
+    '<div class="form-field"><label class="form-label">Smallest dumbbell step (kg)</label><select onchange="RS.dbStep=parseFloat(this.value);rsSave();toast(\'Dumbbell step: \'+this.value+\' kg\')">' +
+    steps.map(function(v){ return '<option value="' + v + '"' + (v === parseFloat(RS.dbStep) ? ' selected' : '') + '>' + v + ' kg</option>'; }).join('') + '</select></div>' +
+    '<div class="rp-line" style="margin:-6px 0 4px">Run plan started ' + fmtDay(runState().start) + (runState().repeats.length ? ' · ' + runState().repeats.length + ' week' + (runState().repeats.length === 1 ? '' : 's') + ' repeated' : '') + '.</div>';
+}
+
+// ── gym history ────────────────────────────────────────────
+function rsHistoryRecords() {
+  return rsLogs().map(function(l) { return { fields: { Date: l.date, WorkoutName: 'Gym ' + l.session + ' · ' + RS_SESSION_NAMES[l.session] }, rs: l }; });
+}
+function rsHistBody(l) {
+  const ids = [];
+  l.sets.forEach(function(s){ if (ids.indexOf(s.exercise) < 0) ids.push(s.exercise); });
+  return ids.map(function(id) {
+    const ex = rsExDef(id); if (!ex) return '';
+    const sets = l.sets.filter(function(s){ return s.exercise === id; });
+    const e = rsEff(ex, sets[0].variant);
+    const done = sets.filter(function(s){ return s.done; });
+    const txt = (l.skipped || []).indexOf(id) >= 0 ? 'skipped' : done.map(function(s) {
+      return e.hold ? s.sec + 's' : (s.weight != null ? s.weight + '×' : '') + s.reps + (s.rir != null ? ' @' + s.rir : '');
+    }).join(' · ') + (sets.length - done.length ? (done.length ? ' · ' : '') + (sets.length - done.length) + ' skipped' : '');
+    return '<div class="hlog-row"><div class="hlog-name">' + esc(e.name) + '</div><div class="hlog-sets wrap">' + txt + '</div></div>';
+  }).join('') + '<button class="rp-link" style="color:var(--danger)" onclick="rsDeleteLog(' + l.id + ')">Delete session</button>';
+}
+function rsDeleteLog(id) {
+  if (!confirm('Delete this gym session? Its sets stop counting towards suggestions.')) return;
+  localStorage.setItem(RS_LOGS_KEY, JSON.stringify(rsLogs().filter(function(l){ return l.id !== id; })));
+  toast('Session deleted');
+  render();
+}
+
+// ═══ RUN TIMER ═════════════════════════════════════════════
+// Runs off a stored start time (minus paused time), like the rest timer, so
+// it is right after a lock, a background or a reload. Switch cues are
+// scheduled ahead on the AudioContext so they can still sound while the page
+// is throttled; a near-silent tone keeps the context running where the
+// browser allows. A screen Wake Lock keeps the phone awake when supported.
+let runLive = loadJSON(RUN_LIVE_KEY);
+let runIv = null, runCueBus = null, wakeLock = null;
+function runLiveSave() { if (runLive) localStorage.setItem(RUN_LIVE_KEY, JSON.stringify(runLive)); else localStorage.removeItem(RUN_LIVE_KEY); }
+function runSegments(s) {
+  const out = [];
+  if (s.type === 'intervals') for (let i = 0; i < s.reps; i++) { out.push({ kind: 'jog', sec: s.jog, rep: i + 1 }); out.push({ kind: 'walk', sec: s.walk, rep: i + 1 }); }
+  else if (s.type === 'continuous') {
+    out.push({ kind: 'run', sec: s.min[0] * 60 });
+    for (let i = 0; i < (s.strides || 0); i++) { out.push({ kind: 'stride', sec: STRIDE_SEC, rep: i + 1 }); out.push({ kind: 'easy', sec: STRIDE_EASY_SEC, rep: i + 1 }); }
+  }
+  return out;   // parkrun: none – plain stopwatch
+}
+const SEG_LABEL = { jog: 'Jog', walk: 'Walk', run: 'Run', stride: 'Stride', easy: 'Easy', done: 'Done', go: 'Go' };
+function runElapsed() { return runLive ? Math.max(0, ((runLive.pausedAt || Date.now()) - runLive.startedAt - runLive.pausedMs) / 1000) : 0; }
+function runTotalSec() { return runLive.segments.reduce(function(a, s){ return a + s.sec; }, 0); }
+function runPos(el) {
+  let t = 0;
+  for (let i = 0; i < runLive.segments.length; i++) {
+    const s = runLive.segments[i];
+    if (el < t + s.sec) return { idx: i, seg: s, left: t + s.sec - el };
+    t += s.sec;
+  }
+  return { idx: runLive.segments.length, seg: null, left: 0, over: el - t };
+}
+function runPlan(slot) {
+  const ws = mondayOf(todayKey()), pw = planWeekFor(ws);
+  return { ws: ws, pw: pw, r: runSessionFor(pw, slot) };
+}
+function runBegin() {
+  const slot = ctx.slot, p = runPlan(slot);
+  if (!p.r) return;
+  if (rsLive) { toast('Finish or discard the gym session first'); return; }
+  unlockAudio();
+  runLive = { date: todayKey(), slot: slot, planWeek: p.pw, session: p.r.session, checkpoint: p.r.checkpoint ? p.r.checkpoint.kind : null,
+    segments: runSegments(p.r.session), startedAt: Date.now(), pausedAt: null, pausedMs: 0, lastIdx: 0 };
+  runLiveSave();
+  cueNow(runLive.segments.length ? runLive.segments[0].kind : 'go');
+  vibrate(VIBES.jog);
+  runGo();
+  render();
+}
+function runGo() {
+  wakeOn();
+  runScheduleCues();
+  if (!runIv) runIv = setInterval(runTick, 250);
+}
+function runRestore() { if (runLive && !runLive.pausedAt) runGo(); }
+function runStop() {
+  if (runIv) { clearInterval(runIv); runIv = null; }
+  runCancelCues();
+  wakeOff();
+}
+const VIBES = { jog: [200, 100, 200], run: [200, 100, 200], stride: [100, 60, 100, 60, 100], walk: [600], easy: [600], done: [300, 100, 300, 100, 700] };
+function runTick() {
+  if (!runLive || runLive.pausedAt) return;
+  const el = runElapsed(), pos = runPos(el);
+  if (runLive.segments.length && pos.idx !== runLive.lastIdx) {
+    // only buzz for a switch that just happened, not one missed while asleep
+    let t = 0; for (let i = 0; i < pos.idx; i++) t += runLive.segments[i].sec;
+    if (el - t < 3) vibrate(VIBES[pos.seg ? pos.seg.kind : 'done']);
+    runLive.lastIdx = pos.idx;
+    runLiveSave();
+    if (view === 'runTimer') render();
+    return;
+  }
+  if (view === 'runTimer') runPaint(el, pos);
+}
+function runPaint(el, pos) {
+  const big = document.getElementById('rt-big'), sub = document.getElementById('rt-total'), bar = document.getElementById('rt-bar');
+  if (!big) return;
+  if (!runLive.segments.length) { big.textContent = fmtDur(el); return; }
+  if (pos.seg) {
+    big.textContent = fmtDur(Math.ceil(pos.left));
+    const total = runTotalSec();
+    if (sub) sub.textContent = fmtDur(Math.ceil(total - el)) + ' remaining · ' + fmtDur(el) + ' elapsed';
+    if (bar) bar.style.width = Math.min(100, el / total * 100) + '%';
+  } else {
+    big.textContent = '+' + fmtDur(pos.over);
+    if (sub) sub.textContent = 'Total ' + fmtDur(el);
+  }
+}
+function runPause() {
+  if (!runLive) return;
+  if (runLive.pausedAt) { runLive.pausedMs += Date.now() - runLive.pausedAt; runLive.pausedAt = null; runLiveSave(); runGo(); }
+  else { runLive.pausedAt = Date.now(); runLiveSave(); runStop(); }
+  render();
+}
+function runEnd() {
+  if (!runLive) return;
+  const el = Math.round(runElapsed()), pos = runPos(el);
+  const finished = !runLive.segments.length || pos.idx >= runLive.segments.length;
+  if (!finished && !confirm('End the run now? You can log it as partial.')) return;
+  runStop();
+  runDraft = { date: runLive.date, slot: runLive.slot, planWeek: runLive.planWeek, session: runLive.session, checkpoint: runLive.checkpoint,
+    completed: finished ? 'yes' : 'partial', duration: fmtDur(el), distance: runLive.session.type === 'parkrun' ? '5' : '', effort: null, calves: null, notes: '', benchTime: runLive.session.type === 'parkrun' ? fmtDur(el) : '' };
+  runLive = null; runLiveSave();
+  nav('runLog');
+}
+function runDiscard() {
+  if (!confirm('Discard this run? Nothing is logged.')) return;
+  runStop();
+  runLive = null; runLiveSave();
+  nav('home');
+}
+function runLogWithoutTimer() {
+  const p = runPlan(ctx.slot);
+  if (!p.r) return;
+  runDraft = { date: todayKey(), slot: ctx.slot, planWeek: p.pw, session: p.r.session, checkpoint: p.r.checkpoint ? p.r.checkpoint.kind : null,
+    completed: 'yes', duration: '', distance: '', effort: null, calves: null, notes: '', benchTime: '' };
+  nav('runLog');
+}
+function vRunTimer() {
+  if (!runLive) {
+    const slot = ctx.slot, p = runPlan(slot);
+    if (!p.r) return '<div class="top-bar"><div class="back-btn" onclick="nav(\'home\')">←</div><div class="top-label">Run</div></div><div class="empty-note">No run planned for this week.</div>';
+    const cp = p.r.checkpoint, mins = runTotalMin(p.r.session);
+    return '<div class="rt k-ready"><div class="rt-top"><div class="back-btn" onclick="nav(\'home\')">←</div><div class="rt-eyebrow">Week ' + p.pw + ' · ' + SLOT_INFO[slot].label + '</div></div>' +
+      '<div class="rt-mid">' + soreWarnHtml() +
+      (cp ? '<div class="cp-text" style="margin-bottom:10px">★ Checkpoint – ' + esc(cp.label) + '</div>' : '') +
+      '<div class="rt-desc">' + esc(runDesc(p.r.session)) + '</div>' +
+      '<div class="rt-sub">' + (mins ? mins + ' min · ' : '') + (p.r.session.type === 'intervals' ? 'A cue and buzz at every switch' : p.r.session.type === 'parkrun' ? 'Stopwatch – tap Finish at the line' : 'Cue when the time is up' + (p.r.session.strides ? ', then strides' : '')) + '</div>' +
+      '<button class="finish-btn cardio-style" style="margin-top:28px" onclick="runBegin()">Start</button>' +
+      '<button class="rp-link" style="display:block;margin:14px auto 0" onclick="runLogWithoutTimer()">Log without the timer</button></div></div>';
+  }
+  const el = runElapsed(), pos = runPos(el), stopwatch = !runLive.segments.length;
+  const kind = stopwatch ? 'run' : pos.seg ? pos.seg.kind : 'done';
+  const reps = pos.seg && pos.seg.rep ? (pos.seg.kind === 'stride' || pos.seg.kind === 'easy' ? 'Stride ' : 'Rep ') + pos.seg.rep + ' of ' + runLive.segments.filter(function(s){ return s.kind === pos.seg.kind; }).length : '';
+  const next = pos.seg && runLive.segments[pos.idx + 1] ? 'Next: ' + SEG_LABEL[runLive.segments[pos.idx + 1].kind] + ' ' + fmtDur(runLive.segments[pos.idx + 1].sec) : pos.seg ? 'Last segment' : '';
+  return '<div class="rt k-' + kind + (runLive.pausedAt ? ' paused' : '') + '">' +
+    '<div class="rt-top"><div class="back-btn" onclick="nav(\'home\')">←</div><div class="rt-eyebrow">Week ' + runLive.planWeek + ' · ' + SLOT_INFO[runLive.slot].label + ' · ' + esc(runDesc(runLive.session)) + '</div></div>' +
+    '<div class="rt-mid"><div class="rt-kind" id="rt-kind">' + (runLive.pausedAt ? 'Paused' : stopwatch ? 'Run' : pos.seg ? SEG_LABEL[kind] : 'Done!') + '</div>' +
+    '<div class="rt-big" id="rt-big"></div>' +
+    '<div class="rt-sub">' + esc(reps) + (reps && next ? ' · ' : '') + esc(next) + (!stopwatch && !pos.seg ? 'Session complete – keep going or finish' : '') + '</div>' +
+    (stopwatch ? '' : '<div class="rt-barwrap"><div class="rt-barfill" id="rt-bar"></div></div><div class="rt-total" id="rt-total"></div>') + '</div>' +
+    '<div class="rt-btns"><button class="rp-btn" onclick="runPause()">' + (runLive.pausedAt ? 'Resume' : 'Pause') + '</button>' +
+    '<button class="rp-btn primary" onclick="runEnd()">Finish</button></div>' +
+    '<button class="rp-link" style="display:block;margin:10px auto 0" onclick="runDiscard()">Discard run</button></div>';
+}
+
+// ── cues ───────────────────────────────────────────────────
+const CUE_TONES = {
+  jog: [[660, 0, .16], [990, .2, .3]], run: [[660, 0, .16], [990, .2, .3]], go: [[660, 0, .16], [990, .2, .3]],
+  stride: [[1200, 0, .09], [1200, .14, .09], [1200, .28, .09]],
+  walk: [[440, 0, .4], [330, .48, .55]], easy: [[440, 0, .4], [330, .48, .55]],
+  done: [[523, 0, .18], [659, .2, .18], [784, .4, .18], [1046, .6, .7]]
+};
+function cueAt(kind, at, bus) {
+  (CUE_TONES[kind] || CUE_TONES.go).forEach(function(t) {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = t[0]; o.connect(g); g.connect(bus);
+    const s = at + t[1];
+    g.gain.setValueAtTime(0.0001, s); g.gain.exponentialRampToValueAtTime(0.35, s + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, s + t[2]);
+    o.start(s); o.stop(s + t[2] + 0.05);
+  });
+}
+function cueNow(kind) { if (!audioCtx) return; try { cueAt(kind, audioCtx.currentTime + 0.05, audioCtx.destination); } catch (e) {} }
+function runCancelCues() { if (runCueBus) { try { runCueBus.disconnect(); } catch (e) {} runCueBus = null; } }
+function runScheduleCues() {
+  runCancelCues();
+  if (!audioCtx || !runLive || runLive.pausedAt || !runLive.segments.length) return;
+  try {
+    const bus = audioCtx.createGain(); bus.connect(audioCtx.destination); runCueBus = bus;
+    const el = runElapsed(), now = audioCtx.currentTime;
+    let t = 0;
+    runLive.segments.forEach(function(s, i) {
+      if (i > 0 && t > el + 0.1) cueAt(s.kind, now + (t - el), bus);
+      t += s.sec;
+    });
+    if (t > el + 0.1) cueAt('done', now + (t - el), bus);
+    // inaudible tone that keeps the context alive until the end
+    const k = audioCtx.createOscillator(), kg = audioCtx.createGain();
+    k.frequency.value = 30; kg.gain.value = 0.001; k.connect(kg); kg.connect(bus);
+    k.start(now); k.stop(now + Math.max(1, t - el + 2));
+  } catch (e) {}
+}
+async function wakeOn() {
+  try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', function(){ wakeLock = null; }); } } catch (e) {}
+}
+function wakeOff() { if (wakeLock) { try { wakeLock.release(); } catch (e) {} wakeLock = null; } }
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden || !runLive || runLive.pausedAt) return;
+  // the context may have been suspended in the background: reschedule from now
+  unlockAudio(); runScheduleCues(); wakeOn(); runTick();
+});
+
+// ═══ RUN LOG ═══════════════════════════════════════════════
+let runDraft = null;
+function vRunLog() {
+  if (!runDraft) return '<div class="empty-note">Nothing to log.</div>';
+  const d = runDraft;
+  const seg = function(field, vals, labels, bad) {
+    return '<div class="fb-seg">' + vals.map(function(v, i) {
+      return '<button class="fb-opt' + (d[field] === v ? ' sel' + (bad && bad.indexOf(v) >= 0 ? ' bad' : '') : '') + '" onclick="runDraftSet(\'' + field + '\',' + JSON.stringify(v).replace(/"/g, '\'') + ')">' + labels[i] + '</button>';
+    }).join('') + '</div>';
+  };
+  const efforts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  return '<div class="top-bar"><div class="back-btn" onclick="runDraft=null;nav(\'home\')">←</div><div class="top-label">' + (d.id ? 'Edit run' : 'Log run') + '</div></div>' +
+    '<div class="pad">' +
+    '<div class="rp-banner" style="border-color:var(--border)"><div class="rp-banner-t" style="margin:0">Planned: <b>Week ' + d.planWeek + ' · ' + SLOT_INFO[d.slot].label + '</b><br>' + esc(runDesc(d.session)) + '</div></div>' +
+    '<div class="form-grid-2"><div class="form-field"><label class="form-label">Date</label><input type="date" value="' + esc(d.date) + '" onchange="runDraft.date=this.value"></div>' +
+    '<div class="form-field"><label class="form-label">Duration (m:ss)</label><input id="rl-dur" inputmode="numeric" placeholder="24:00" value="' + esc(d.duration) + '" oninput="runDraft.duration=this.value"></div></div>' +
+    '<div class="fb-q">Completed</div>' + seg('completed', ['yes', 'partial', 'no'], ['Yes', 'Partial', 'No'], ['no']) +
+    '<div class="form-grid-2" style="margin-top:14px"><div class="form-field"><label class="form-label">Distance (km, optional)</label><input id="rl-dist" type="number" inputmode="decimal" step="0.01" min="0" value="' + esc(d.distance) + '" oninput="runDraft.distance=this.value"></div>' +
+    (d.checkpoint === 'parkrun' ? '<div class="form-field"><label class="form-label cp-text">5 km time (m:ss)</label><input id="rl-bench" inputmode="numeric" placeholder="25:00" value="' + esc(d.benchTime) + '" oninput="runDraft.benchTime=this.value"></div>' : '<div></div>') + '</div>' +
+    '<div class="fb-q">Effort <span>1 easy · 10 max</span></div><div class="effort-grid">' + efforts.map(function(v) {
+      return '<button class="fb-opt' + (d.effort === v ? ' sel' : '') + '" onclick="runDraftSet(\'effort\',' + v + ')">' + v + '</button>';
+    }).join('') + '</div>' +
+    '<div class="fb-q">Calves</div>' + seg('calves', ['fine', 'tight', 'sore'], ['Fine', 'Tight', 'Sore'], ['tight', 'sore']) +
+    '<div class="form-field" style="margin-top:14px"><label class="form-label">Notes</label><textarea rows="3" oninput="runDraft.notes=this.value">' + esc(d.notes) + '</textarea></div>' +
+    '<button class="save-btn" onclick="runSaveLog()">Save Run</button><div style="height:30px"></div></div>';
+}
+function runDraftSet(field, v) {
+  runDraft[field] = v;
+  const keep = window.scrollY;
+  render();
+  window.scrollTo(0, keep);
+}
+function runSaveLog() {
+  const d = runDraft;
+  if (!d.effort) { toast('Pick an effort score'); return; }
+  if (!d.calves) { toast('How are the calves?'); return; }
+  const dur = parseDur(d.duration);
+  if (d.duration && dur == null) { toast('Duration as m:ss, e.g. 24:00'); return; }
+  const benchSec = d.checkpoint === 'parkrun' ? parseDur(d.benchTime) : null;
+  if (d.checkpoint === 'parkrun' && d.completed !== 'no' && benchSec == null) { toast('Enter your 5 km time'); return; }
+  const dist = parseFloat(d.distance);
+  const log = { id: d.id || Date.now(), date: d.date || todayKey(), slot: d.slot, phase: 1, planWeek: d.planWeek, session: d.session, checkpoint: d.checkpoint || null,
+    completed: d.completed, durationSec: dur, distanceKm: isNaN(dist) ? null : dist, effort: d.effort, calves: d.calves, notes: (d.notes || '').trim() };
+  const logs = runLogs().filter(function(l){ return l.id !== log.id; });
+  logs.push(log);
+  runLogsSave(logs);
+  // a checkpoint run doubles as a benchmark when it has a time
+  let b = benchmarks().filter(function(x){ return x.runId !== log.id; });
+  let benchNote = '';
+  if (log.checkpoint && log.completed !== 'no') {
+    if (log.checkpoint === 'parkrun') {
+      b.push({ id: log.id, runId: log.id, date: log.date, kind: 'parkrun', label: 'parkrun baseline', distanceM: 5000, timeSec: benchSec });
+      benchNote = ' · baseline ' + fmtDur(benchSec) + ' saved';
+    } else if (dur) {
+      b.push({ id: log.id, runId: log.id, date: log.date, kind: log.checkpoint, label: 'Checkpoint – 20 min continuous', distanceM: log.distanceKm ? Math.round(log.distanceKm * 1000) : null, timeSec: dur });
+      benchNote = ' · checkpoint saved';
+    }
+  }
+  benchSave(b);
+  runDraft = null;
+  toast('Run logged ✓' + benchNote);
+  nav('home');
+}
+function runHistoryRecords() {
+  return runLogs().map(function(l) {
+    return { fields: { Date: l.date, WorkoutName: SLOT_INFO[l.slot].label + ' · Week ' + l.planWeek + (l.completed === 'yes' ? '' : l.completed === 'partial' ? ' · partial' : ' · not done') }, run: l };
+  });
+}
+function runHistBody(l) {
+  const row = function(k, v){ return '<div class="hlog-row"><div class="hlog-name">' + k + '</div><div class="hlog-sets wrap">' + esc(v) + '</div></div>'; };
+  return row('Planned', runDesc(l.session)) + row('Completed', l.completed) + (l.durationSec ? row('Duration', fmtDur(l.durationSec)) : '') +
+    (l.distanceKm ? row('Distance', l.distanceKm + ' km') : '') + row('Effort', l.effort + '/10') + row('Calves', l.calves) + (l.notes ? row('Notes', l.notes) : '') +
+    '<div class="rp-links"><button class="rp-link accent" onclick="runEditLog(' + l.id + ')">✎ Edit</button><button class="rp-link" style="color:var(--danger)" onclick="runDeleteLog(' + l.id + ')">Delete</button></div>';
+}
+function runEditLog(id) {
+  const l = runLogs().find(function(x){ return x.id === id; });
+  if (!l) return;
+  const bm = benchmarks().find(function(b){ return b.runId === id && b.kind === 'parkrun'; });
+  runDraft = { id: l.id, date: l.date, slot: l.slot, planWeek: l.planWeek, session: l.session, checkpoint: l.checkpoint, completed: l.completed,
+    duration: fmtDur(l.durationSec), distance: l.distanceKm == null ? '' : String(l.distanceKm), effort: l.effort, calves: l.calves, notes: l.notes || '', benchTime: bm ? fmtDur(bm.timeSec) : '' };
+  nav('runLog');
+}
+function runDeleteLog(id) {
+  if (!confirm('Delete this run?')) return;
+  runLogsSave(runLogs().filter(function(l){ return l.id !== id; }));
+  benchSave(benchmarks().filter(function(b){ return b.runId !== id; }));
+  toast('Run deleted');
+  render();
+}
+
+// ═══ PROGRESS: phases, gates, benchmarks, weight ═══════════
+function phase1Gate() {
+  const logs = runLogs(), today = todayKey();
+  const ran40 = logs.some(function(l) {
+    return l.completed === 'yes' && l.session && l.session.type === 'continuous' && (l.session.min[0] >= 40 || (l.durationSec || 0) >= 2400);
+  });
+  const recent = logs.filter(function(l){ const d = daysBetween(l.date, today); return d >= 0 && d < 14; });
+  const calm = recent.length > 0 && !recent.some(function(l){ return l.calves === 'tight' || l.calves === 'sore'; });
+  const baseline = benchmarks().some(function(b){ return b.kind === 'parkrun'; });
+  return [
+    { label: '40 minutes continuous running completed', ok: ran40 },
+    { label: 'No calf “tight” or “sore” in the last 2 weeks', ok: calm, sub: recent.length ? '' : 'Needs runs logged in the last 2 weeks' },
+    { label: 'Parkrun baseline recorded', ok: baseline }
+  ];
+}
+function vProgress() {
+  const gate = phase1Gate(), open2 = gate.every(function(g){ return g.ok; });
+  const cps = checkpointDates();
+  const gateHtml = gate.map(function(g) {
+    return '<div class="gate-item' + (g.ok ? ' ok' : '') + '"><span class="gate-box">' + (g.ok ? '✓' : '') + '</span><div>' + esc(g.label) +
+      (g.sub ? '<div class="gate-sub">' + esc(g.sub) + '</div>' : '') + '</div></div>';
+  }).join('');
+  const phaseCards = RUN_PHASES.slice(1).map(function(p) {
+    const unlocked = p.id === 2 && open2;
+    return '<div class="phase-card' + (unlocked ? ' open' : ' locked') + '" id="phase-' + p.id + '"><div class="phase-h"><span>' + esc(p.name) + '</span><span class="phase-lock">' + (unlocked ? 'Unlocked' : '🔒 Locked') + '</span></div>' +
+      '<div class="phase-g">' + esc(p.gate) + '</div>' + (unlocked ? '<div class="phase-g" style="color:var(--accent)">Phase 1 gate passed – add the Phase 2 weeks when you\'re ready.</div>' : '') + '</div>';
+  }).join('');
+  return '<div class="top-bar"><div class="top-label">Progress</div></div><div class="pad">' +
+    '<div class="section-head">Phases</div>' +
+    '<div class="phase-card current" id="phase-1"><div class="phase-h"><span>' + esc(RUN_PHASES[0].name) + '</span><span class="phase-lock" style="color:var(--cardio)">Current</span></div>' +
+    '<div class="phase-g" id="cp-dates">Checkpoints: ' + cps.map(function(c){ return '<b class="cp-text">' + (c.date ? fmtDay(c.date) : '–') + '</b> ' + esc(c.label); }).join(' · ') + '</div>' +
+    '<div class="gate-list">' + gateHtml + '</div></div>' + phaseCards +
+    '<div class="section-head" style="margin-top:26px">Benchmarks</div>' + benchHtml() +
+    '<div class="section-head" style="margin-top:26px">Body weight</div>' + weightHtml() + '<div style="height:20px"></div></div>';
+}
+function benchHtml() {
+  const b = benchmarks().slice().sort(function(x, y){ return x.date < y.date ? 1 : x.date > y.date ? -1 : y.id - x.id; });
+  const rows = b.length ? b.map(function(x) {
+    return '<div class="bench-row"><div class="bench-d">' + fmtDay(x.date) + '</div><div class="bench-l">' + esc(x.label || '') + '<div class="mrow-sub">' + fmtDist(x.distanceM) + '</div></div>' +
+      '<div class="bench-t">' + fmtDur(x.timeSec) + '</div><button class="icon-btn" onclick="benchDelete(' + x.id + ')" aria-label="Delete">✕</button></div>';
+  }).join('') : '<div class="rp-line" style="margin:0 0 10px">No benchmarks yet – checkpoint runs land here.</div>';
+  return '<div id="bench-list">' + rows + '</div>' +
+    '<details class="add-box"><summary>+ Add a timed effort</summary>' +
+    '<div class="form-grid-3" style="margin-top:12px"><div class="form-field"><label class="form-label">Date</label><input id="bm-date" type="date" value="' + todayKey() + '"></div>' +
+    '<div class="form-field"><label class="form-label">Distance</label><select id="bm-dist"><option value="800">800 m</option><option value="1000">1 km</option><option value="1609">1 mile</option><option value="5000" selected>5 km</option><option value="10000">10 km</option></select></div>' +
+    '<div class="form-field"><label class="form-label">Time</label><input id="bm-time" inputmode="numeric" placeholder="m:ss"></div></div>' +
+    '<div class="form-field"><label class="form-label">Label</label><input id="bm-label" placeholder="e.g. 800 m time trial"></div>' +
+    '<button class="add-btn" style="margin-top:0" onclick="benchAdd()">Save benchmark</button></details>';
+}
+function benchAdd() {
+  const t = parseDur(document.getElementById('bm-time').value);
+  if (t == null) { toast('Time as m:ss'); return; }
+  const dist = parseInt(document.getElementById('bm-dist').value, 10);
+  const b = benchmarks();
+  b.push({ id: Date.now(), date: document.getElementById('bm-date').value || todayKey(), kind: dist === 5000 ? 'parkrun' : 'manual',
+    label: document.getElementById('bm-label').value.trim() || fmtDist(dist) + ' effort', distanceM: dist, timeSec: t });
+  benchSave(b);
+  toast('Benchmark saved');
+  render();
+}
+function benchDelete(id) {
+  if (!confirm('Delete this benchmark?')) return;
+  benchSave(benchmarks().filter(function(b){ return b.id !== id; }));
+  render();
+}
+// trailing 7-day average at each weigh-in
+function weightAvg(ws, i) {
+  const vals = ws.filter(function(w){ const d = daysBetween(w.date, ws[i].date); return d >= 0 && d < 7; }).map(function(w){ return w.kg; });
+  return vals.reduce(function(a, b){ return a + b; }, 0) / vals.length;
+}
+function weightHtml() {
+  const ws = weighIns();
+  const last = ws[ws.length - 1];
+  let chart = '<div class="rp-line" style="margin:0 0 10px">Add two or more weigh-ins to see the trend.</div>';
+  if (ws.length >= 2) {
+    const W = 320, H = 130, P = 10;
+    const t0 = dateOf(ws[0].date).getTime(), span = Math.max(1, dateOf(last.date).getTime() - t0);
+    const avgs = ws.map(function(w, i){ return weightAvg(ws, i); });
+    const all = ws.map(function(w){ return w.kg; }).concat(avgs);
+    const lo = Math.min.apply(null, all) - 0.5, hi = Math.max.apply(null, all) + 0.5;
+    const x = function(d){ return P + (dateOf(d).getTime() - t0) / span * (W - 2 * P); };
+    const y = function(v){ return H - P - (v - lo) / (hi - lo) * (H - 2 * P); };
+    const pts = function(vals){ return ws.map(function(w, i){ return x(w.date).toFixed(1) + ',' + y(vals[i]).toFixed(1); }).join(' '); };
+    chart = '<svg class="wchart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Body weight trend">' +
+      '<polyline points="' + pts(ws.map(function(w){ return w.kg; })) + '" style="fill:none;stroke:var(--border2);stroke-width:1.5"/>' +
+      ws.map(function(w){ return '<circle cx="' + x(w.date).toFixed(1) + '" cy="' + y(w.kg).toFixed(1) + '" r="2.5" style="fill:var(--muted2)"/>'; }).join('') +
+      '<polyline points="' + pts(avgs) + '" style="fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round"/></svg>' +
+      '<div class="wlegend"><span><i style="background:var(--muted2)"></i>Weigh-ins</span><span><i style="background:var(--accent)"></i>7-day average</span>' +
+      '<span style="margin-left:auto">' + ws[0].kg + ' → ' + last.kg + ' kg</span></div>';
+  }
+  const list = ws.slice(-6).reverse().map(function(w) {
+    return '<div class="hlog-row"><div class="hlog-name">' + fmtDay(w.date) + '</div><div class="hlog-sets">' + w.kg + ' kg <button class="rp-link" style="padding:0 0 0 10px" onclick="weightDelete(\'' + w.date + '\')">✕</button></div></div>';
+  }).join('');
+  return chart + '<div style="display:flex;gap:8px;margin:12px 0 6px"><input id="wt-date" type="date" value="' + todayKey() + '" style="flex:1.2;min-width:0">' +
+    '<input id="wt-kg" type="number" inputmode="decimal" step="0.1" min="0" placeholder="kg" style="flex:1;min-width:0">' +
+    '<button class="icon-btn" style="width:auto;padding:0 14px;height:auto" onclick="weightAdd()">Add</button></div>' + list;
+}
+function weightAdd() {
+  const kg = parseFloat(document.getElementById('wt-kg').value), date = document.getElementById('wt-date').value || todayKey();
+  if (isNaN(kg) || kg <= 0) { toast('Enter your weight in kg'); return; }
+  const ws = weighIns().filter(function(w){ return w.date !== date; });
+  ws.push({ date: date, kg: round2(kg) });
+  localStorage.setItem(WEIGHT_KEY, JSON.stringify(ws));
+  render();
+}
+function weightDelete(date) {
+  localStorage.setItem(WEIGHT_KEY, JSON.stringify(weighIns().filter(function(w){ return w.date !== date; })));
+  render();
+}
+
+// ═══ BACKUP: JSON export / import ══════════════════════════
+// Every cleanslate_* / cs3_* key except the sync key (a secret) and the
+// one-off pre-migration copy. Import replaces this phone's data, then reloads
+// so migrations run on whatever schema the file was written with.
+function exportKeys() { return appKeys().filter(function(k){ return k !== SYNC_KEY_STORE && k !== PREMIGRATION_KEY; }); }
+function backupHtml() {
+  return '<button class="add-btn" onclick="exportData()">⇩ Export all data (JSON)</button>' +
+    '<button class="add-btn" onclick="document.getElementById(\'import-file\').click()">⇧ Import from a JSON file</button>' +
+    '<input id="import-file" type="file" accept="application/json,.json" style="display:none" onchange="importData(this)">' +
+    '<div class="rp-line" style="text-align:center">Everything on this phone except the sync key. Keep a copy somewhere safe.</div>';
+}
+function exportData() {
+  const data = {};
+  exportKeys().forEach(function(k){ data[k] = localStorage.getItem(k); });
+  const blob = new Blob([JSON.stringify({ app: 'clean-slate', schema: SCHEMA_VERSION, exportedAt: new Date().toISOString(), data: data }, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'clean-slate-backup-' + todayKey() + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+  toast('Backup exported');
+}
+function importData(input) {
+  const f = input.files && input.files[0];
+  input.value = '';
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = function() {
+    let o;
+    try { o = JSON.parse(r.result); } catch (e) { toast('Not a valid backup file'); return; }
+    if (!o || o.app !== 'clean-slate' || !o.data || typeof o.data !== 'object') { toast('Not a Clean Slate backup'); return; }
+    if (!confirm('Replace all data on this phone with the backup from ' + (o.exportedAt ? new Date(o.exportedAt).toLocaleDateString('en-AU') : 'the file') + '?')) return;
+    exportKeys().forEach(function(k){ localStorage.removeItem(k); });
+    Object.keys(o.data).forEach(function(k) {
+      if ((k.indexOf('cleanslate_') === 0 || k.indexOf('cs3_') === 0) && k !== SYNC_KEY_STORE && typeof o.data[k] === 'string') localStorage.setItem(k, o.data[k]);
+    });
+    if (!o.data[SCHEMA_KEY]) localStorage.removeItem(SCHEMA_KEY);
+    location.reload();
+  };
+  r.readAsText(f);
+}
+
 // ═══ INIT ══════════════════════════════════════════════════
 window.addEventListener('online', function(){ online = true; updateSyncDot(); flushQueue(); });
 window.addEventListener('offline', function(){ online = false; updateSyncDot(); });
@@ -2190,9 +3474,10 @@ if ('serviceWorker' in navigator) {
 
 (async function init() {
   timerRestore();
+  runRestore();
   const hadCache = cacheLoad();
-  // RP Recomp lives in localStorage, so home can render without waiting on Airtable
-  if (rpActive()) { nav('home'); loadAll(true).then(function(){ if (view === 'home' || view === 'manage') render(); }); return; }
+  // RP Recomp and Run-Strength live in localStorage, so home can render without waiting on Airtable
+  if (rpActive() || rsActive()) { nav('home'); loadAll(true).then(function(){ if (view === 'home' || view === 'manage') render(); }); return; }
   if (hadCache) { nav('home'); loadAll(true).then(function(){ if (view === 'home') render(); }); }
   else { await loadAll(); nav('home'); }
 })();
