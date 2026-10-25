@@ -60,11 +60,25 @@ async function launch() {
   return browser;
 }
 
-async function newPage(browser, baseUrl, worker) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+// opts.programme: 'rp' (default – the RP Recomp tests predate v10, where
+// Run-Strength became the default) or 'rs' for a plain fresh install.
+// opts.time: fixes the page clock (Playwright clock) before load.
+// opts.seed: { key: value } written to localStorage before the first load only.
+async function newPage(browser, baseUrl, worker, opts = {}) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, acceptDownloads: true });
   await ctx.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   await ctx.route(/workers\.dev/, worker ? worker.route : (r) => r.abort());
+  const seed = Object.assign({}, opts.programme === 'rs' ? {} : {
+    cleanslate_schema: '1', cleanslate_rp_state: JSON.stringify({ activeProgram: 'rp-recomp-3day' })
+  }, opts.seed || {});
+  await ctx.addInitScript((seed) => {
+    if (sessionStorage.getItem('__seeded')) return;
+    sessionStorage.setItem('__seeded', '1');
+    for (const [k, v] of Object.entries(seed)) localStorage.setItem(k, v);
+  }, seed);
+  if (opts.init) await ctx.addInitScript(opts.init);
   const page = await ctx.newPage();
+  if (opts.time) await page.clock.install({ time: new Date(opts.time) });
   page.errors = [];
   page.on('pageerror', (e) => page.errors.push(e.message));
   page.on('dialog', (d) => d.accept());
